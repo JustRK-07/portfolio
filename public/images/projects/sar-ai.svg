@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 225" width="400" height="225">
+  <defs>
+    <linearGradient id="bg-sar" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0b1728"/>
+      <stop offset="1" stop-color="#101e32"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="225" fill="url(#bg-sar)"/>
+  <g stroke="rgba(45,212,191,0.4)" stroke-width="1.2" fill="none">
+    <rect x="40" y="60" width="160" height="100" rx="3"/>
+    <rect x="220" y="60" width="140" height="100" rx="3"/>
+  </g>
+  <g font-family="ui-monospace, monospace" font-size="10" fill="#5eead4">
+    <text x="50" y="80">SAR-AI</text>
+    <text x="50" y="100" fill="#b3c1d1">// 5 agents</text>
+    <text x="50" y="118" fill="#b3c1d1">// audit trail</text>
+    <text x="50" y="136" fill="#b3c1d1">// constitutional</text>
+    <text x="50" y="154" fill="#2dd4bf">┌─────────────┐</text>
+    <text x="230" y="80">▸ click any</text>
+    <text x="230" y="100" fill="#b3c1d1">  sentence</text>
+    <text x="230" y="120" fill="#b3c1d1">▸ see evidence</text>
+    <text x="230" y="140" fill="#b3c1d1">▸ see transaction</text>
+  </g>
+  <text x="40" y="200" font-family="ui-monospace, monospace" font-size="14" fill="#5eead4" letter-spacing="2">// SAR-AI · audit provenance</text>
+</svg>

@@ -1,0 +1,29 @@
+---
+export interface Props {
+  email: string;
+  githubUrl: string;
+  linkedinUrl: string;
+  name: string;
+}
+const { email, githubUrl, linkedinUrl, name } = Astro.props;
+const year = new Date().getFullYear();
+---
+
+<footer class="border-t border-line mt-20">
+  <div class="px-5 sm:px-8 lg:px-16 py-10 flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-between">
+    <div>
+      <p class="meta mb-1">// contact</p>
+      <a href={`mailto:${email}`} class="text-ink hover:text-teal-400 transition-colors text-lg">
+        {email}
+      </a>
+    </div>
+    <div class="flex items-center gap-4 text-sm">
+      <a href={githubUrl} target="_blank" rel="noreferrer noopener" class="text-slate-500 hover:text-teal-400 transition-colors">GitHub</a>
+      <a href={linkedinUrl} target="_blank" rel="noreferrer noopener" class="text-slate-500 hover:text-teal-400 transition-colors">LinkedIn</a>
+    </div>
+  </div>
+  <div class="px-5 sm:px-8 lg:px-16 pb-8 flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-between meta">
+    <span>© {year} {name}. Built with Astro.</span>
+    <span>v1.0.0</span>
+  </div>
+</footer>

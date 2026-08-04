@@ -1,0 +1,12 @@
+---
+company: "ISGEC Heavy Engineering"
+role: "Industry Project — Agentic CAD Validation (ADV)"
+period: "July 2026 – Present"
+location: "Pune, India (sponsored engagement)"
+summary: "Co-architected a CAD-drawing validation platform under a semester-long engagement with ISGEC Heavy Engineering. Two-phase pipeline: synchronous rule engine + async LLM enhancement pass."
+bullets:
+  - "Designed a two-phase pipeline: Phase 1 (parsing + 8-rule engine) completes in ~1.8s on a real 7.4MB drawing (~17.8K entities); Phase 2 runs as an async LLM enhancement pass with a hard timeout."
+  - "Co-built an 8-rule geometric validation engine using Shapely spatial indexing (STRtree) for sub-quadratic clash detection, Hungarian-algorithm optimal assignment for 1:1 equipment matching, and RapidFuzz for fuzzy ID reconciliation — covered by 78 pytest cases at 91% statement coverage."
+technologies: [Next.js 14, FastAPI, SQLAlchemy 2, Pydantic v2, Google Gemini, Ollama, Shapely, RapidFuzz, pytest]
+sortOrder: 3
+---

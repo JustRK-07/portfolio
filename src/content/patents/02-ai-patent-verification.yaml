@@ -1,0 +1,6 @@
+title: "AI Patent Verification System"
+venue: "Indian Patent Application"
+status: Filed
+year: 2025
+description: "Verification pipeline for AI-generated patent claims: novelty scoring, prior-art retrieval, and counterexample surfacing."
+sortOrder: 2

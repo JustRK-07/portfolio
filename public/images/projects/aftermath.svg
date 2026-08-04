@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 225" width="400" height="225">
+  <defs>
+    <linearGradient id="bg-am" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0b1728"/>
+      <stop offset="1" stop-color="#101e32"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="225" fill="url(#bg-am)"/>
+  <g fill="none" stroke="rgba(45,212,191,0.4)" stroke-width="1.2">
+    <rect x="40" y="100" width="60" height="40" rx="3"/>
+    <rect x="120" y="100" width="60" height="40" rx="3"/>
+    <rect x="200" y="100" width="60" height="40" rx="3"/>
+    <rect x="280" y="100" width="60" height="40" rx="3"/>
+  </g>
+  <g font-family="ui-monospace, monospace" font-size="10" fill="#5eead4" text-anchor="middle">
+    <text x="70" y="125">D</text>
+    <text x="150" y="125">A</text>
+    <text x="230" y="125">R</text>
+    <text x="310" y="125">C</text>
+  </g>
+  <g stroke="#2dd4bf" stroke-width="1.5" fill="none" marker-end="url(#arr-am)">
+    <line x1="100" y1="120" x2="120" y2="120"/>
+    <line x1="180" y1="120" x2="200" y2="120"/>
+    <line x1="260" y1="120" x2="280" y2="120"/>
+    <path d="M 310 120 q 30 0 60 0 q -100 0 -200 0" stroke-dasharray="3 3"/>
+  </g>
+  <defs>
+    <marker id="arr-am" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 z" fill="#2dd4bf"/>
+    </marker>
+  </defs>
+  <text x="40" y="200" font-family="ui-monospace, monospace" font-size="14" fill="#5eead4" letter-spacing="2">// AfterMath · DARC loop</text>
+</svg>

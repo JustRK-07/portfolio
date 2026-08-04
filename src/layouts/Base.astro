@@ -1,0 +1,72 @@
+---
+import '../styles/globals.css';
+
+export interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+}
+
+const {
+  title = 'Rushabh Kalme — Software Engineer · Backend Systems',
+  description = 'Software engineer at VIT Pune building production multi-agent systems, WebRTC SDKs, and edge-AI. Intern @ Genxa Solutions. Cummins Merit Scholar. Codeforces Expert.',
+  image = '/og-image.png',
+} = Astro.props;
+
+const canonical = new URL(Astro.url.pathname, Astro.site).toString();
+---
+
+<!doctype html>
+<html lang="en" class="bg-navy-950 text-ink">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+
+    <!-- Theme -->
+    <meta name="theme-color" content="#07111f" />
+    <meta name="color-scheme" content="dark" />
+
+    <!-- Icons -->
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={new URL(image, Astro.site).toString()} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:site_name" content="Rushabh Kalme" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={new URL(image, Astro.site).toString()} />
+
+    <!-- JSON-LD -->
+    <script type="application/ld+json" is:inline set:html={JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'Person',
+      name: 'Rushabh Kalme',
+      url: 'https://rushabh.dev',
+      email: 'mailto:rushabkalme@gmail.com',
+      jobTitle: 'Software Engineer',
+      alumniOf: 'VIT Pune',
+      sameAs: [
+        'https://github.com/JustRK-07',
+        'https://www.linkedin.com/in/rushabh-kalme',
+        'https://codeforces.com/profile/JustRK-07',
+      ],
+    })} />
+  </head>
+
+  <body>
+    <a href="#main-content" class="skip-link">Skip to content</a>
+    <slot />
+  </body>
+</html>

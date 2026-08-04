@@ -1,0 +1,89 @@
+---
+export interface Props {
+  lines: string[];
+  prompt?: string;
+  speedMs?: number;
+}
+
+const { lines, prompt = '$', speedMs = 50 } = Astro.props;
+const fallback = lines[0] ?? '';
+---
+
+<div
+  class="typewriter font-mono text-sm sm:text-base lg:text-lg text-slate-300 break-words"
+  data-typewriter
+  data-lines={JSON.stringify(lines)}
+  data-speed={speedMs}
+>
+  <span class="text-teal-400" aria-hidden="true">{prompt}&nbsp;</span><span class="typewriter-text text-pretty" aria-live="polite">{fallback}</span><span class="cursor" aria-hidden="true"></span>
+</div>
+
+<script>
+  const initTypewriter = (root: HTMLElement) => {
+    if (root.dataset.typed === '1') return;
+    root.dataset.typed = '1';
+
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const text = root.querySelector<HTMLElement>('.typewriter-text');
+    if (!text) return;
+
+    let lines: string[] = [];
+    try {
+      lines = JSON.parse(root.dataset.lines || '[]');
+    } catch {
+      lines = [];
+    }
+    const speed = Number(root.dataset.speed || '50');
+    if (reduce || lines.length === 0) {
+      text.textContent = lines.join(' · ');
+      return;
+    }
+
+    let lineIdx = 0;
+    let charIdx = 0;
+    let phase: 'type' | 'pause' | 'erase' = 'type';
+    const tick = () => {
+      const current = lines[lineIdx];
+      if (phase === 'type') {
+        charIdx++;
+        text!.textContent = current.slice(0, charIdx);
+        if (charIdx >= current.length) {
+          phase = 'pause';
+          window.setTimeout(tick, 1200);
+          return;
+        }
+        window.setTimeout(tick, speed + Math.random() * 30);
+      } else if (phase === 'pause') {
+        phase = 'erase';
+        window.setTimeout(tick, 40);
+      } else {
+        charIdx--;
+        text!.textContent = current.slice(0, charIdx);
+        if (charIdx <= 0) {
+          phase = 'type';
+          lineIdx = (lineIdx + 1) % lines.length;
+          window.setTimeout(tick, 250);
+          return;
+        }
+        window.setTimeout(tick, 25);
+      }
+    };
+
+    // Defer until visible
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (e.isIntersecting) {
+            io.disconnect();
+            window.setTimeout(tick, 350);
+            break;
+          }
+        }
+      },
+      { threshold: 0.3 }
+    );
+    io.observe(root);
+  };
+
+  document.querySelectorAll<HTMLElement>('[data-typewriter]').forEach(initTypewriter);
+</script>

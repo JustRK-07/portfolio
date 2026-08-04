@@ -1,0 +1,37 @@
+---
+title: "ADV — Agentic CAD Drawing Validation"
+year: 2026
+category: Full-Stack
+stack: [nextjs, fastapi, gemini, ollama, shapely]
+githubUrl: "https://github.com/JustRK-07/ADV"
+thumbnail: "/images/projects/adv.svg"
+featured: true
+role: "Co-architect (industry engagement with ISGEC Heavy Engineering)"
+summary: "Two-phase CAD validation platform: a synchronous geometric rule engine plus an async LLM enhancement pass. Validates real General Arrangement drawings at scale."
+problem: "Manual review of structural and mechanical GA drawings is slow, inconsistent, and a bottleneck in heavy-engineering design cycles."
+approach: "Decoupled Phase 1 (parsing + 8-rule Shapely/Hungarian/RapidFuzz engine, ~1.8s on a 7.4MB drawing) from Phase 2 (async LLM enhancement via Gemini/Ollama with a hard timeout)."
+results:
+  - "78 pytest cases, 91% statement coverage"
+  - "Phase 1 runs in ~1.8s on a real 7.4MB drawing (~17.8K entities)"
+  - "Semester-long industry engagement, sponsored by ISGEC Heavy Engineering"
+tech: [Next.js 14, FastAPI, SQLAlchemy 2, Pydantic v2, Google Gemini, Ollama, Shapely, RapidFuzz]
+metrics:
+  - { label: "rules", value: "8" }
+  - { label: "tests", value: "78" }
+  - { label: "coverage", value: "91%" }
+  - { label: "phase-1", value: "1.8s" }
+status: Public
+sortOrder: 1
+---
+
+## Context
+
+ISGEC Heavy Engineering produces large structural and mechanical General Arrangement (GA) drawings that historically required manual review by senior engineers. ADV replaces that review with a deterministic geometric rule engine layered with an LLM-assisted explanation pass, both gated by a strict latency budget.
+
+## What the rule engine does
+
+Eight rules cover structural, dimensional, and ID-consistency checks. The hot path uses Shapely's STRtree for sub-quadratic spatial indexing, a Hungarian-algorithm pass for 1:1 equipment matching, and RapidFuzz for fuzzy ID reconciliation. Together they catch the majority of mechanical-drawing defects that humans would normally flag.
+
+## Latency budget
+
+Phase 1 (sync) targets 1.8s on real 7.4MB drawings. Phase 2 (async) runs as a background enhancement via Gemini or a local Ollama model and writes its findings to a separate report — never blocking the user.

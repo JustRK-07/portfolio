@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 225" width="400" height="225">
+  <defs>
+    <linearGradient id="bg-fv" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0b1728"/>
+      <stop offset="1" stop-color="#101e32"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="225" fill="url(#bg-fv)"/>
+  <g stroke="#2dd4bf" stroke-width="1.5" fill="none">
+    <polyline points="40,160 80,140 120,150 160,110 200,120 240,80 280,95 320,60 360,75"/>
+  </g>
+  <g stroke="rgba(45,212,191,0.25)" stroke-width="1" fill="none">
+    <line x1="40" y1="40" x2="40" y2="200"/>
+    <line x1="40" y1="200" x2="360" y2="200"/>
+    <line x1="40" y1="40" x2="360" y2="40" stroke-dasharray="2 4"/>
+    <line x1="40" y1="120" x2="360" y2="120" stroke-dasharray="2 4"/>
+  </g>
+  <g fill="#2dd4bf">
+    <circle cx="40" cy="160" r="3"/>
+    <circle cx="80" cy="140" r="3"/>
+    <circle cx="120" cy="150" r="3"/>
+    <circle cx="160" cy="110" r="3"/>
+    <circle cx="200" cy="120" r="3"/>
+    <circle cx="240" cy="80" r="3"/>
+    <circle cx="280" cy="95" r="3"/>
+    <circle cx="320" cy="60" r="3"/>
+    <circle cx="360" cy="75" r="3"/>
+  </g>
+  <text x="40" y="200" font-family="ui-monospace, monospace" font-size="14" fill="#5eead4" letter-spacing="2">// Foretell Vista · STGNN</text>
+</svg>

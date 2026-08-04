@@ -1,0 +1,23 @@
+---
+title: "AfterMath — On-Call SRE Agent with Memory"
+year: 2026
+category: Multi-Agent
+stack: [typescript, gpt-4o, nextjs, radix-ui]
+githubUrl: "https://github.com/JustRK-07/solver-squad-AfterMath"
+thumbnail: "/images/projects/aftermath.svg"
+featured: true
+summary: "An SRE agent that remembers every past outage, proposes evidence-cited mitigations with a real confidence score, refuses fixes that have backfired, and decays weak fixes. Built on Hindsight memory + OpenClaw SRE agent."
+problem: "When a service breaks at 3 a.m., the on-call engineer is alone with a wall of alerts. The lesson from the last time this happened lives in a Slack thread nobody can find."
+approach: "A DARC loop (Diagnose-Act-Record-Consolidate) wired to a memory bank. Every successful fix strengthens the memory; every failed fix is logged and used to refuse the same fix in the future. Decay scoring fades fixes that stop working."
+results:
+  - "Bank of India CyberShield 2026 entry"
+  - "Evidence-cited mitigations with confidence scores"
+  - "Refuses fixes that have backfired before; decays weak fixes over time"
+tech: [TypeScript, GPT-4o, Hindsight plugin, OpenClaw, Next.js 15, Radix UI]
+status: Public
+sortOrder: 6
+---
+
+## Memory is the product
+
+Generic AI incident bots hallucinate with no memory of what actually happened at your company. AfterMath refuses to recommend a fix that has already failed at your shop, and it gets visibly faster with each incident it sees.

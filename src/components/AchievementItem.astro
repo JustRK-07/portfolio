@@ -1,0 +1,26 @@
+---
+export interface Achievement {
+  title: string;
+  detail: string;
+  year: string;
+  rank?: string;
+}
+
+export interface Props {
+  achievement: Achievement;
+  index: number;
+}
+
+const { achievement, index } = Astro.props;
+const idx = String(index).padStart(2, '0');
+---
+
+<article class="flex items-baseline gap-4 sm:gap-6 py-4 border-b border-line last:border-b-0">
+  <span class="num text-sm text-teal-400">{idx}</span>
+  <div class="flex-1">
+    <h3 class="text-base sm:text-lg text-ink font-medium text-balance">{achievement.title}</h3>
+    <p class="text-slate-300 text-sm mt-1 text-pretty">{achievement.detail}</p>
+  </div>
+  {achievement.rank && <span class="pill !border-teal-400 !text-teal-400">{achievement.rank}</span>}
+  <span class="meta text-slate-500 whitespace-nowrap">{achievement.year}</span>
+</article>

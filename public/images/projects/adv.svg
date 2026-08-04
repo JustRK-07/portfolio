@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 225" width="400" height="225">
+  <defs>
+    <linearGradient id="bg-adv" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0b1728"/>
+      <stop offset="1" stop-color="#101e32"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="225" fill="url(#bg-adv)"/>
+  <g stroke="rgba(45,212,191,0.4)" stroke-width="1.2" fill="none">
+    <rect x="40" y="40" width="120" height="80"/>
+    <rect x="180" y="60" width="80" height="60"/>
+    <rect x="280" y="100" width="80" height="60"/>
+    <line x1="100" y1="120" x2="220" y2="90"/>
+    <line x1="260" y1="90" x2="320" y2="130"/>
+  </g>
+  <text x="40" y="200" font-family="ui-monospace, monospace" font-size="14" fill="#5eead4" letter-spacing="2">// ADV · CAD validation</text>
+</svg>

@@ -1,0 +1,55 @@
+---
+import CategoryPill from './CategoryPill.astro';
+
+export type FilterCategory = 'All' | 'Multi-Agent' | 'Fintech' | 'Edge-AI' | 'Full-Stack' | 'RAG';
+export interface Props {
+  categories: FilterCategory[];
+}
+const { categories } = Astro.props;
+---
+
+<div
+  class="project-filter flex flex-wrap gap-2 mb-8"
+  role="toolbar"
+  aria-label="Filter projects by category"
+>
+  {categories.map((c) => (
+    <CategoryPill label={c} asButton active={c === 'All'} />
+  ))}
+</div>
+
+<div class="hidden" data-empty-state>
+  <p class="meta">No projects in this category yet.</p>
+</div>
+
+<script>
+  const root = document.querySelector<HTMLElement>('.project-filter');
+  if (root) {
+    const buttons = root.querySelectorAll<HTMLButtonElement>('button[data-filter]');
+    const cards = document.querySelectorAll<HTMLElement>('[data-project-card]');
+
+    const applyFilter = (cat: string) => {
+      let visible = 0;
+      cards.forEach((card) => {
+        const show = cat === 'All' || card.dataset.category === cat;
+        card.hidden = !show;
+        if (show) visible++;
+      });
+      buttons.forEach((b) => {
+        b.setAttribute('aria-pressed', String(b.dataset.filter === cat));
+        if (b.dataset.filter === cat) {
+          b.classList.add('!border-teal-400', '!text-teal-400');
+        } else {
+          b.classList.remove('!border-teal-400', '!text-teal-400');
+        }
+      });
+    };
+
+    buttons.forEach((b) => {
+      b.addEventListener('click', () => {
+        const cat = b.dataset.filter || 'All';
+        applyFilter(cat);
+      });
+    });
+  }
+</script>

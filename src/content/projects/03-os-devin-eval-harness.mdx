@@ -1,0 +1,27 @@
+---
+title: "OS-Devin — Evaluation Harness for Coding Agents"
+year: 2026
+category: Multi-Agent
+stack: [python, langgraph, docker, ast, litellm]
+githubUrl: "https://github.com/JustRK-07/os-devin-multi-agent-system"
+thumbnail: "/images/projects/os-devin.svg"
+featured: true
+summary: "A measurement instrument for autonomous coding agents. Four-agent LangGraph system (Planner, Code, Reviewer, Debugger) benchmarked across 18 hand-curated tasks, 4 agent configurations, and 3 LLM backends — with Docker-managed isolation and AST-based side-effect guards."
+problem: "Most agentic-coding demos show a single run. They don't isolate the marginal contribution of each architectural component, so 'it worked once' gets mistaken for 'it works'."
+approach: "Treat the agent stack as a configurable benchmark. Toggle a self-healing retry loop, an AST pre-edit guard, and a per-task Docker sandbox; measure pass-rate delta on a fixed task suite with oracle-based scoring."
+results:
+  - "Reproducible 4-config × 3-backend matrix on 18 hand-curated tasks"
+  - "Isolates the marginal lift of each architectural component"
+  - "Defensible methodology: any fork can rerun and disagree publicly"
+tech: [Python 3.12, LangGraph, LangChain, LiteLLM, tree-sitter AST, Docker, pytest, Next.js (dashboard)]
+metrics:
+  - { label: "tasks", value: "18" }
+  - { label: "configs", value: "4" }
+  - { label: "backends", value: "3" }
+status: Public
+sortOrder: 3
+---
+
+## The product is the table, not the agent
+
+The harness is what matters. Anyone running it and disagreeing with the methodology is welcome to fork, modify the configs, and rerun — the system is designed to be falsified.

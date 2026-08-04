@@ -1,0 +1,257 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import Sidebar from '../components/Sidebar.astro';
+import Hero from '../components/Hero.astro';
+import ExperienceItem from '../components/ExperienceItem.astro';
+import ProjectCard, { type Project } from '../components/ProjectCard.astro';
+import ProjectFilter, { type FilterCategory } from '../components/ProjectFilter.astro';
+import PatentItem from '../components/PatentItem.astro';
+import AchievementItem from '../components/AchievementItem.astro';
+import Footer from '../components/Footer.astro';
+
+const projectsRaw = (await getCollection('projects')).sort(
+  (a, b) => (a.data.sortOrder ?? 999) - (b.data.sortOrder ?? 999)
+);
+const experienceRaw = (await getCollection('experience')).sort(
+  (a, b) => a.data.sortOrder - b.data.sortOrder
+);
+const patents = (await getCollection('patents')).sort(
+  (a, b) => (b.data.year - a.data.year) || ((a.data.sortOrder ?? 0) - (b.data.sortOrder ?? 0))
+);
+const achievements = (await getCollection('achievements')).sort(
+  (a, b) => (a.data.sortOrder ?? 0) - (b.data.sortOrder ?? 0)
+);
+const writing = (await getCollection('writing')).filter((w) => !w.data.draft).sort((a, b) => +b.data.publishedAt - +a.data.publishedAt);
+
+const projects: Project[] = projectsRaw.map((p) => ({
+  title: p.data.title,
+  slug: p.slug,
+  year: p.data.year,
+  category: p.data.category,
+  summary: p.data.summary,
+  stack: p.data.stack,
+  tech: p.data.tech,
+  githubUrl: p.data.githubUrl,
+  demoUrl: p.data.demoUrl,
+  thumbnail: p.data.thumbnail,
+  status: p.data.status,
+  featured: p.data.featured,
+  metrics: p.data.metrics,
+}));
+
+const filterCategories: FilterCategory[] = ['All', 'Multi-Agent', 'Fintech', 'Edge-AI', 'Full-Stack', 'RAG'];
+
+const typewriterLines = [
+  'multi-agent systems',
+  'retrieval-augmented products',
+  'edge AI that works outside the cloud',
+  'production WebRTC at sub-200ms',
+];
+
+const heroMetrics = [
+  { value: '9.29',       label: 'GPA · VIT Pune' },
+  { value: 'sub-200ms',  label: 'p50 WebRTC latency' },
+  { value: '4 min',      label: 'credit evaluation' },
+  { value: '78 / 91%',   label: 'tests / coverage' },
+];
+
+const sidebar = {
+  name: 'Rushabh Kalme',
+  role: 'Software Engineer · Backend Systems',
+  email: 'rushabkalme@gmail.com',
+  phone: '+91 9529117230',
+  location: 'Pune, India',
+  resumeHref: '/resume.pdf',
+  githubHref: 'https://github.com/JustRK-07',
+  linkedinHref: 'https://www.linkedin.com/in/rushabh-kalme',
+  codeforcesHref: 'https://codeforces.com/profile/JustRK-07',
+};
+---
+
+<Base
+  title="Rushabh Kalme — Software Engineer · Backend Systems"
+  description="Software engineer at VIT Pune building production multi-agent systems, WebRTC SDKs, and edge-AI. Intern @ Genxa Solutions. Cummins Merit Scholar. Codeforces Expert."
+>
+  <div class="container-grid">
+    <Sidebar {...sidebar} />
+
+    <main id="main-content" class="min-w-0 lg:col-start-2">
+      <div class="px-5 sm:px-8 lg:px-16 pt-12 sm:pt-16 lg:pt-20 pb-24 max-w-content min-w-0 overflow-hidden">
+
+        <Hero
+          name={sidebar.name}
+          eyebrow="// available for new roles · 2026"
+          pitch="Production-grade backend systems and multi-agent AI products. Currently shipping a WebRTC SDK at Genxa Solutions. Strong on distributed systems, RAG, and edge inference."
+          typewriterLines={typewriterLines}
+          metrics={heroMetrics}
+        />
+
+        <hr class="rule my-20" />
+
+        <section id="experience" class="scroll-mt-24">
+          <header class="mb-10">
+            <p class="meta mb-2">// 02</p>
+            <h2 class="text-[clamp(1.6rem,3vw,2.4rem)] font-semibold text-balance">Experience</h2>
+            <p class="text-slate-300 mt-2 max-w-prose-thin text-pretty">
+              Production engineering at startups and industry engagements, focused on real-time systems and applied AI.
+            </p>
+          </header>
+
+          <div class="space-y-0">
+            {experienceRaw.map((entry, i) => (
+              <ExperienceItem
+                index={i + 1}
+                company={entry.data.company}
+                role={entry.data.role}
+                period={entry.data.period}
+                location={entry.data.location}
+                summary={entry.data.summary}
+                bullets={entry.data.bullets}
+                technologies={entry.data.technologies}
+              />
+            ))}
+          </div>
+        </section>
+
+        <hr class="rule my-20" />
+
+        <section id="projects" class="scroll-mt-24">
+          <header class="mb-10">
+            <p class="meta mb-2">// 03</p>
+            <h2 class="text-[clamp(1.6rem,3vw,2.4rem)] font-semibold text-balance">Projects</h2>
+            <p class="text-slate-300 mt-2 max-w-prose-thin text-pretty">
+              A working catalogue — multi-agent systems, fintech infra, edge-AI, and full-stack platforms. Filter by category.
+            </p>
+          </header>
+
+          <ProjectFilter categories={filterCategories} />
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
+            {projects.map((p, i) => <ProjectCard index={i + 1} project={p} />)}
+          </div>
+        </section>
+
+        <hr class="rule my-20" />
+
+        <section id="patents" class="scroll-mt-24">
+          <header class="mb-10">
+            <p class="meta mb-2">// 04</p>
+            <h2 class="text-[clamp(1.6rem,3vw,2.4rem)] font-semibold text-balance">Patents & Publications</h2>
+            <p class="text-slate-300 mt-2 max-w-prose-thin text-pretty">
+              One IEEE-accepted paper and four patent applications filed between 2025 and 2026.
+            </p>
+          </header>
+
+          <div>
+            {patents.map((entry, i) => <PatentItem patent={entry.data} index={i + 1} />)}
+          </div>
+        </section>
+
+        <hr class="rule my-20" />
+
+        <section id="achievements" class="scroll-mt-24">
+          <header class="mb-10">
+            <p class="meta mb-2">// 05</p>
+            <h2 class="text-[clamp(1.6rem,3vw,2.4rem)] font-semibold text-balance">Achievements</h2>
+          </header>
+
+          <div>
+            {achievements.map((entry, i) => <AchievementItem achievement={entry.data} index={i + 1} />)}
+          </div>
+        </section>
+
+        <hr class="rule my-20" />
+
+        <section id="writing" class="scroll-mt-24">
+          <header class="mb-10">
+            <p class="meta mb-2">// 06</p>
+            <h2 class="text-[clamp(1.6rem,3vw,2.4rem)] font-semibold text-balance">Writing</h2>
+            <p class="text-slate-300 mt-2 max-w-prose-thin text-pretty">
+              Notes on what I am building and learning. Coming soon.
+            </p>
+          </header>
+
+          {writing.length > 0 ? (
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+              {writing.map((w) => (
+                <article class="card p-5">
+                  <h3 class="text-base sm:text-lg text-ink font-medium text-balance">{w.data.title}</h3>
+                  <p class="text-slate-300 text-sm mt-2 text-pretty">{w.data.description}</p>
+                  <div class="mt-3 flex flex-wrap gap-1.5">
+                    {w.data.tags.map((t) => <span class="pill !text-[0.65rem]">{t}</span>)}
+                  </div>
+                </article>
+              ))}
+            </div>
+          ) : (
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <article class="card p-5 opacity-70">
+                <span class="pill !text-[0.6rem] !border-slate-700 !text-slate-500">Coming soon</span>
+                <h3 class="text-base sm:text-lg text-ink font-medium mt-3 text-balance">Building reliable agent loops at production latency</h3>
+                <p class="text-slate-300 text-sm mt-2 text-pretty">Patterns for retries, idempotency, and circuit-breaking inside multi-agent pipelines.</p>
+              </article>
+              <article class="card p-5 opacity-70">
+                <span class="pill !text-[0.6rem] !border-slate-700 !text-slate-500">Coming soon</span>
+                <h3 class="text-base sm:text-lg text-ink font-medium mt-3 text-balance">Designing evaluation harnesses for coding agents</h3>
+                <p class="text-slate-300 text-sm mt-2 text-pretty">What the OS-Devin eval matrix taught me about measurement over demos.</p>
+              </article>
+            </div>
+          )}
+        </section>
+
+        <hr class="rule my-20" />
+
+        <section id="contact" class="scroll-mt-24">
+          <header class="mb-8">
+            <p class="meta mb-2">// 07</p>
+            <h2 class="text-[clamp(1.6rem,3vw,2.4rem)] font-semibold text-balance">Get in touch</h2>
+            <p class="text-slate-300 mt-2 max-w-prose-thin text-pretty">
+              Open to full-time software engineering roles (backend, distributed systems, applied AI) starting 2026.
+            </p>
+          </header>
+
+          <a
+            href={`mailto:${sidebar.email}`}
+            class="inline-flex items-center gap-2 text-teal-400 hover:text-teal-DEFAULT transition-colors text-lg"
+          >
+            <span class="num">{sidebar.email}</span>
+            <span aria-hidden="true">↗</span>
+          </a>
+        </section>
+
+        <Footer
+          email={sidebar.email}
+          githubUrl={sidebar.githubHref}
+          linkedinUrl={sidebar.linkedinHref}
+          name={sidebar.name}
+        />
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // Active section highlighting in sidebar
+    const links = document.querySelectorAll<HTMLAnchorElement>('[data-nav-link]');
+    if (links.length) {
+      const sections = Array.from(links)
+        .map((l) => document.querySelector(l.getAttribute('href') || ''))
+        .filter((s): s is HTMLElement => !!s);
+
+      const io = new IntersectionObserver(
+        (entries) => {
+          for (const e of entries) {
+            const id = '#' + e.target.id;
+            const link = document.querySelector(`[data-nav-link][href="${id}"]`);
+            if (link && e.isIntersecting) {
+              links.forEach((l) => l.classList.remove('text-teal-400'));
+              link.classList.add('text-teal-400');
+            }
+          }
+        },
+        { rootMargin: '-30% 0px -60% 0px' }
+      );
+      sections.forEach((s) => io.observe(s));
+    }
+  </script>
+</Base>

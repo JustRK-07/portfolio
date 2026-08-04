@@ -1,0 +1,23 @@
+---
+title: "SAR-AI — Multi-Agent AML Compliance"
+year: 2026
+category: Fintech
+stack: [python, langchain, react, react-flow, fastapi]
+githubUrl: "https://github.com/JustRK-07/SAR-AI-Multi-Agent-Compliance-Automation-with-Sentence-Level-Audit-Provenance"
+thumbnail: "/images/projects/sar-ai.svg"
+featured: true
+summary: "Five-agent Suspicious Activity Report (SAR) narrative generator with sentence-level audit provenance. Constitutional AI prevents speculation. React Flow visualizes the underlying transaction graph."
+problem: "AML SARs are written by analysts under deadline pressure. The result is inconsistency, speculation, and no audit trail back to the underlying evidence."
+approach: "Five agents collaborate (intake, transaction graph, evidence retrieval, narrative drafter, audit prover) backed by ChromaDB and Llama 3.1 via Ollama. Every sentence in the output maps to a clickable evidence trail."
+results:
+  - "Click any sentence to see its supporting evidence"
+  - "React Flow visualizes the transaction graph"
+  - "Constitutional AI: refuses to speculate beyond retrieved evidence"
+tech: [FastAPI, Python 3.11, LangChain, LangGraph, ChromaDB, Ollama (Llama 3.1), React 18, TypeScript, TailwindCSS, TanStack Query, React Flow]
+status: Public
+sortOrder: 7
+---
+
+## Sentence-level provenance
+
+For a regulator, "the system said so" is not an answer. SAR-AI ships with a clickable audit trail — every sentence in the narrative links back to the transaction and the retrieval that produced it.

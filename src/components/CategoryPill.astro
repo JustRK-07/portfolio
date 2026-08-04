@@ -1,0 +1,18 @@
+---
+export interface Props {
+  label: string;
+  active?: boolean;
+  asButton?: boolean;
+}
+const { label, active = false, asButton = false } = Astro.props;
+const Tag = asButton ? 'button' : 'span';
+---
+
+<Tag
+  type={asButton ? 'button' : undefined}
+  class={`pill ${active ? '!border-teal-400 !text-teal-400' : ''}`}
+  aria-pressed={asButton ? active : undefined}
+  data-filter={asButton ? label : undefined}
+>
+  {label}
+</Tag>

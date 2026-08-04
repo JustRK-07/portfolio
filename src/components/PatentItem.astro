@@ -1,0 +1,34 @@
+---
+export interface Patent {
+  title: string;
+  venue: string;
+  status: 'Filed' | 'Accepted' | 'Published';
+  year: number;
+  link?: string;
+  description: string;
+}
+
+export interface Props {
+  patent: Patent;
+  index: number;
+}
+
+const { patent, index } = Astro.props;
+const idx = String(index).padStart(2, '0');
+const statusClass =
+  patent.status === 'Accepted'
+    ? '!border-teal-400 !text-teal-400'
+    : '!border-slate-700 !text-slate-300';
+---
+
+<article class="grid grid-cols-[auto_1fr_auto] gap-4 sm:gap-6 py-5 border-b border-line last:border-b-0">
+  <span class="num text-sm text-slate-500">{idx}</span>
+  <div>
+    <h3 class="text-base sm:text-lg text-ink font-medium text-balance">{patent.title}</h3>
+    <p class="meta mt-1">{patent.venue} · {patent.year}</p>
+    <p class="text-slate-300 text-sm mt-2 text-pretty">{patent.description}</p>
+  </div>
+  <div class="text-right">
+    <span class={`pill ${statusClass}`}>{patent.status}</span>
+  </div>
+</article>
