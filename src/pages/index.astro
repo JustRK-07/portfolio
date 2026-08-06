@@ -22,7 +22,6 @@ const patents = (await getCollection('patents')).sort(
 const achievements = (await getCollection('achievements')).sort(
   (a, b) => (a.data.sortOrder ?? 0) - (b.data.sortOrder ?? 0)
 );
-const writing = (await getCollection('writing')).filter((w) => !w.data.draft).sort((a, b) => +b.data.publishedAt - +a.data.publishedAt);
 
 const projects: Project[] = projectsRaw.map((p) => ({
   title: p.data.title,
@@ -41,7 +40,7 @@ const projects: Project[] = projectsRaw.map((p) => ({
   metrics: p.data.metrics,
 }));
 
-const filterCategories: FilterCategory[] = ['All', 'Multi-Agent', 'Fintech', 'Edge-AI', 'Full-Stack', 'RAG'];
+const filterCategories: FilterCategory[] = ['All', 'Multi-Agent', 'Fintech', 'Edge-AI', 'Full-Stack'];
 
 const typewriterLines = [
   'multi-agent systems',
@@ -59,7 +58,7 @@ const heroMetrics = [
 
 const sidebar = {
   name: 'Rushabh Kalme',
-  role: 'Software Engineer · Backend Systems',
+  role: 'Software Engineer · Backend & Agentic Systems',
   email: 'rushabkalme@gmail.com',
   phone: '+91 9529117230',
   location: 'Pune, India',
@@ -83,7 +82,7 @@ const sidebar = {
         <Hero
           name={sidebar.name}
           eyebrow="// available for new roles · 2026"
-          pitch="Built a WebRTC SDK at Genxa Solutions that cut client integration from 4–5 days to under 2 hours — sub-200ms p50, 2.3K concurrent calls/day, 99.9% uptime. Also shipped a 7-agent LangGraph credit pipeline that cut appraisal from 3–6 weeks to under 4 minutes."
+          pitch="Two internships at Genxa Solutions — most recently built a sub-200ms p50 WebRTC SDK that cut client integration from 4–5 days to under 2 hours, and earlier shipped a multi-tenant voice platform running 2.3K concurrent calls/day at 99.9% uptime. On my own time, designed a 7-agent LangGraph pipeline that compresses 3–6 weeks of manual credit appraisal into under 4 minutes. Codeforces Expert (1619), Cummins Merit Scholar, four patents filed since 2025, one IEEE paper accepted."
           typewriterLines={typewriterLines}
           metrics={heroMetrics}
         />
@@ -165,48 +164,9 @@ const sidebar = {
 
         <hr class="rule my-20" />
 
-        <section id="writing" class="scroll-mt-24">
-          <header class="mb-10">
-            <p class="meta mb-2">// 06</p>
-            <h2 class="text-[clamp(1.6rem,3vw,2.4rem)] font-semibold text-balance">Writing</h2>
-            <p class="text-slate-300 mt-2 max-w-prose-thin text-pretty">
-              Notes on what I am building and learning. Coming soon.
-            </p>
-          </header>
-
-          {writing.length > 0 ? (
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-              {writing.map((w) => (
-                <article class="card p-5">
-                  <h3 class="text-base sm:text-lg text-ink font-medium text-balance">{w.data.title}</h3>
-                  <p class="text-slate-300 text-sm mt-2 text-pretty">{w.data.description}</p>
-                  <div class="mt-3 flex flex-wrap gap-1.5">
-                    {w.data.tags.map((t) => <span class="pill !text-[0.65rem]">{t}</span>)}
-                  </div>
-                </article>
-              ))}
-            </div>
-          ) : (
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-              <article class="card p-5 opacity-70">
-                <span class="pill !text-[0.6rem] !border-slate-700 !text-slate-500">Coming soon</span>
-                <h3 class="text-base sm:text-lg text-ink font-medium mt-3 text-balance">Building reliable agent loops at production latency</h3>
-                <p class="text-slate-300 text-sm mt-2 text-pretty">Patterns for retries, idempotency, and circuit-breaking inside multi-agent pipelines.</p>
-              </article>
-              <article class="card p-5 opacity-70">
-                <span class="pill !text-[0.6rem] !border-slate-700 !text-slate-500">Coming soon</span>
-                <h3 class="text-base sm:text-lg text-ink font-medium mt-3 text-balance">Designing evaluation harnesses for coding agents</h3>
-                <p class="text-slate-300 text-sm mt-2 text-pretty">What the OS-Devin eval matrix taught me about measurement over demos.</p>
-              </article>
-            </div>
-          )}
-        </section>
-
-        <hr class="rule my-20" />
-
         <section id="contact" class="scroll-mt-24">
           <header class="mb-8">
-            <p class="meta mb-2">// 07</p>
+            <p class="meta mb-2">// 06</p>
             <h2 class="text-[clamp(1.6rem,3vw,2.4rem)] font-semibold text-balance">Get in touch</h2>
             <p class="text-slate-300 mt-2 max-w-prose-thin text-pretty">
               Open to full-time software engineering roles (backend, distributed systems, applied AI) starting 2026.
