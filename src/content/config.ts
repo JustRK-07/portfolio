@@ -19,6 +19,7 @@ const projects = defineCollection({
     status: z.enum(['Public', 'Private', 'Coming Soon']).default('Public'),
     coverImage: z.string().optional(),
     architectureDiagram: z.string().optional(),
+    images: z.array(z.string()).optional(),
     metrics: z
       .array(
         z.object({
@@ -36,6 +37,7 @@ const experience = defineCollection({
   type: 'content',
   schema: z.object({
     company: z.string(),
+    website: z.string().url().optional(),
     role: z.string(),
     period: z.string(),
     location: z.string().optional(),

@@ -2,6 +2,7 @@
 export interface Props {
   index: number;
   company: string;
+  website?: string;
   role: string;
   period: string;
   location?: string;
@@ -10,7 +11,7 @@ export interface Props {
   technologies: string[];
 }
 
-const { index, company, role, period, location, summary, bullets, technologies } = Astro.props;
+const { index, company, website, role, period, location, summary, bullets, technologies } = Astro.props;
 const idx = String(index).padStart(2, '0');
 ---
 
@@ -25,7 +26,19 @@ const idx = String(index).padStart(2, '0');
       <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1">
         <h3 class="text-lg sm:text-xl font-semibold text-ink">{role}</h3>
         <span class="num text-sm text-slate-500">·</span>
-        <span class="text-teal-400">{company}</span>
+        {website ? (
+          <a
+            href={website}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-teal-400 hover:underline inline-flex items-baseline gap-1"
+          >
+            <span>{company}</span>
+            <span aria-hidden="true" class="text-xs">↗</span>
+          </a>
+        ) : (
+          <span class="text-teal-400">{company}</span>
+        )}
       </div>
       <div class="meta text-slate-500 mt-1">
         {period}{location && <span> · {location}</span>}
