@@ -1,27 +1,29 @@
 ---
-title: "Foretell Vista — Multi-Stakeholder Forecasting"
+title: "Foretell Vista — Multi-Stakeholder Demand Forecasting"
 year: 2026
 category: Multi-Agent
 stack: [pytorch, ray, fedavg, react, shap]
 githubUrl: "https://github.com/JustRK-07/Multi-Stakeholder-Demand-Forecasting-and-Inventory-Optimization-with-Causal-Inference-GNNs"
 thumbnail: "/images/projects/foretell-vista.svg"
 featured: true
-summary: "Spatio-temporal GNN with federated averaging across retail silos. Causal attribution via SHAP + DoWhy, replenishment policy optimized with Ray RLlib — over 5,000 SKUs."
-problem: "Demand forecasting in retail has to balance product-level signal, cross-product elasticity, and the privacy constraints of each stakeholder's silo."
-approach: "STGNN for cross-product elasticity, FedAvg for federated learning across silos, SHAP+DoWhy for causal attribution, and Ray RLlib for replenishment policy optimization."
+summary: "Industry project for YatrikiSoft. PyTorch STGNN with FedAvg across retail silos, causal attribution via SHAP + DoWhy, and adaptive replenishment via Ray RLlib — 4,200 SKUs, 14.2% → 11.1% MAPE."
+problem: "Demand forecasting in retail has to balance product-level signal, cross-product elasticity, and the privacy constraints of each stakeholder's silo — while explaining which campaign is actually driving the lift."
+approach: "PyTorch STGNN for cross-product spatio-temporal elasticity, FedAvg for federated learning across silos (zero raw-data transfer), SHAP + DoWhy for causal attribution that fixes promotion misattribution, and Ray RLlib RL agents for adaptive multi-dimensional reorder policies."
 results:
-  - "Operational across 5,000+ SKUs"
-  - "Federated training across retail silos without raw-data sharing"
-  - "Causal attribution for every forecast (SHAP + DoWhy)"
-tech: [PyTorch, XGBoost, Ray RLlib, Prophet, CVXPY, SHAP, DoWhy, Federated Learning, Vite, React, shadcn/ui, FastAPI]
+  - "7-day MAPE improved 14.2% → 11.1% across 4,200 SKUs"
+  - "Outperformed LightGBM by 2.1 MAPE points and ARIMA by 3.1 on held-out Q4 data"
+  - "Cut cross-silo data transfer to zero via FedAvg federated learning"
+  - "Causal attribution directly informing enterprise campaign-budget allocation"
+tech: [PyTorch (STGNN), XGBoost, Ray RLlib, SHAP, DoWhy, FedAvg, CVXPY, Vite, React, shadcn/ui, FastAPI]
 metrics:
-  - { label: "SKUs", value: "5,000+" }
-  - { label: "silos", value: "multi" }
-  - { label: "MAPE lift", value: "15%" }
+  - { label: "MAPE", value: "14.2 → 11.1%" }
+  - { label: "SKUs", value: "4,200" }
+  - { label: "vs LightGBM", value: "-2.1 pts" }
+  - { label: "silos", value: "federated" }
 status: Public
 sortOrder: 4
 ---
 
 ## Causal, not correlative
 
-Most forecasters answer "what will demand be." Foretell Vista answers "why will demand move, and what is the cheapest lever to pull." SHAP gives feature attribution, DoWhy validates the causal graph, and the RL policy then maps the levers to inventory actions.
+Most forecasters answer "what will demand be." Foretell Vista answers "why will demand move, and what is the cheapest lever to pull." SHAP gives feature attribution, DoWhy validates the causal graph — pinning promotion moves to revenue lift instead of co-incident trends — and the RL policy then maps the levers to inventory actions across 4,200 SKUs without any raw-data sharing between silos.

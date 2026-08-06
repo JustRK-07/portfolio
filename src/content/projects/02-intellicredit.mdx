@@ -8,14 +8,16 @@ thumbnail: "/images/projects/intellicredit.svg"
 featured: true
 summary: "India-Stack-native credit intelligence. Seven autonomous AI agents ingest via the Account Aggregator network, reconcile GSTR-2A vs GSTR-3B for ITC fraud, and produce an explainable Credit Appraisal Memo — including counterfactual reasoning — in ~4 minutes."
 problem: "India's corporate loan appraisal takes 3–6 weeks and costs banks roughly ₹80,000 per file. Existing automation is shallow and unauditable."
-approach: "Seven specialized LangGraph agents (ingestion, GSTR reconciliation, buyer-concentration risk, financial-trend analysis, fraud signal, counterfactual reasoning, memo writer) wired to a pgvector-backed retrieval layer for explainability."
+approach: "Seven specialized LangGraph agents (ingestion, GSTR reconciliation, buyer-concentration risk, financial-trend analysis, fraud signal, counterfactual reasoning, memo writer) wired to a pgvector-backed retrieval layer for explainability. A 13-table PostgreSQL schema with provenance tracking and source attribution underwrites every credit decision; the memo writer enforces RBI compliance rules. Asynchronous orchestration on a real-time FastAPI / Redis pub-sub / WebSockets backend surfaces live workflow progress."
 results:
-  - "End-to-end appraisal in ~4 minutes"
+  - "End-to-end appraisal in ~4 minutes (vs 3–6 weeks manual)"
   - "Counterfactual reasoning: tells the borrower exactly what to change to get approved"
+  - "Audit-ready Credit Appraisal Memos with RBI compliance rules"
   - "Account Aggregator + GSTN native integration"
-tech: [Python, LangGraph, LangChain, FastAPI, PostgreSQL, pgvector, React, OpenAI API]
+tech: [Python, LangGraph, LangChain, FastAPI, PostgreSQL, pgvector, Redis, WebSockets, React, OpenAI API]
 metrics:
   - { label: "agents", value: "7" }
+  - { label: "DB schema", value: "13 tbl" }
   - { label: "runtime", value: "~4 min" }
   - { label: "vs manual", value: "3–6 wk" }
 status: Public
