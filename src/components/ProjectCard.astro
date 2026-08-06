@@ -15,6 +15,7 @@ export interface Project {
   images?: string[];
   status: 'Public' | 'Private' | 'Coming Soon';
   featured: boolean;
+  caseStudy?: boolean;
   metrics?: Array<{ label: string; value: string }>;
 }
 
@@ -27,6 +28,62 @@ const { index, project } = Astro.props;
 const idx = String(index).padStart(2, '0');
 const gallery = project.images && project.images.length > 0 ? project.images : [project.thumbnail];
 const hasMultiple = gallery.length > 1;
+
+// Image-slug → alt map. Each value describes what's in the screenshot,
+// not just the project name. Falls back to a generic alt when unmapped.
+const alts: Record<string, string> = {
+  // ADV — DWG clash detection
+  'adv-cad-validation/0': 'CAD drawing of test1 (Sheet 0001) with multiple hard-clash markers highlighted across structural members',
+  'adv-cad-validation/1': 'Hard-clash detail popover showing two polygon intersections and traceability IDs',
+  'adv-cad-validation/2': 'Overlay mode blending the mechanical layer over structural members with annotation tools',
+  'adv-cad-validation/3': 'Zoomed-in structural view with hard-clash markers concentrated at a central node',
+  'adv-cad-validation/4': 'Annotation mode marking a hard-clash region with a callout dimension',
+
+  // IntelliCredit — credit appraisal
+  'intellicredit/0': 'Credit appraisal memo for Tata Steel: score 743, BBB+ risk, 7-agent LangGraph workflow',
+  'intellicredit/1': 'Decline decision card explaining a phantom-ITC mismatch with a 3-step counterfactual path-to-approve',
+  'intellicredit/2': 'GSTR-2A vs GSTR-3B reconciliation matrix for seven suppliers with colored heatmap',
+
+  // OS-Devin — eval harness
+  'os-devin-eval-harness/0': '18×3 evaluation matrix showing pass-rate per task across gpt-4o, Claude Opus, and Gemini 1.5',
+  'os-devin-eval-harness/1': 'Component ablation matrix showing self-heal adds +18 points, AST guard +12, sandbox −9',
+  'os-devin-eval-harness/2': 'Agent trace timeline: planner, code, reviewer, debugger iterations over a 42-second run',
+
+  // Foretell Vista — federated forecasting
+  'foretell-vista/0': '7-day demand forecast chart for SKU-5821 with a promo flag mid-week and confidence band',
+  'foretell-vista/1': 'Federated training console: per-silo loss curves converging at round 42 of 60',
+  'foretell-vista/2': 'Ray RLlib replenishment training curve and top-10 SKU reorder queue with confidence scores',
+
+  // Rail Yard — yard scheduling
+  'rail-yard-slot-and-conflict-manager/0': '6-track yard schedule for Pune Junction showing 12 active trains and zero conflicts',
+  'rail-yard-slot-and-conflict-manager/1': 'DB-rejected reservation: timeline showing the overlap window on track PL-02 with fix suggestions',
+  'rail-yard-slot-and-conflict-manager/2': 'Reservation drawer for T-22841 with all GiST exclusion pre-checks passing',
+
+  // AfterMath — SRE agent
+  'aftermath-sre-agent/0': 'Live triage of INC-2026-1142 across the four Diagnose-Act-Record-Consolidate stages with the agent chat log',
+  'aftermath-sre-agent/1': 'Memory bank browser listing 487 episodes with one high-confidence fix selected',
+  'aftermath-sre-agent/2': 'GRR forensic analyst view of file collection and process list from the referenced tool',
+
+  // SAR-AI — AML compliance
+  'sar-ai-compliance/0': 'Transaction graph showing EU counterparties (some OFAC-flagged) flowing through a customer to a Chinese exchange',
+  'sar-ai-compliance/1': 'SAR narrative with clickable sentence-level provenance and the 5-agent execution trace',
+  'sar-ai-compliance/2': 'Case analytics dashboard with 30 days of filings and a constitutional-AI refusal log',
+
+  // SignHear — voice-to-sign
+  'signhear/0': 'Live translation window: audio waveform, running transcript, and a Sutton SignWriting stick figure',
+  'signhear/1': '5-stage offline pipeline diagram with a 1.29-second sync latency budget per stage',
+  'signhear/2': 'Settings panel showing three active ASR languages and dictionary coverage',
+
+  // NHAI Netra — mobile field verification
+  'nhai-netra/0': 'NHAI field operations check-in screen with biometric pipeline, 94% average trust, 28 successes',
+  'nhai-netra/1': 'Tamper-evident SHA-256 ledger history showing four check-ins with trust scores 91–95',
+  'nhai-netra/2': 'Cloud synchronization screen confirming 4 records synced successfully',
+  'nhai-netra/3': 'Alternate check-in screen with status bar and same biometric pipeline',
+};
+
+const altFor = (i: number) =>
+  alts[`${project.slug}/${i}`] ??
+  `${project.title} screenshot ${i + 1}`;
 ---
 
 <article
@@ -54,10 +111,11 @@ const hasMultiple = gallery.length > 1;
   >
     <img
       src={gallery[0]}
-      alt={`${project.title} thumbnail`}
+      alt={altFor(0)}
       class="w-full h-full object-cover transition-opacity duration-200"
       data-carousel-img
       data-sources={JSON.stringify(gallery)}
+      data-alts={JSON.stringify(gallery.map((_, i) => altFor(i)))}
       loading="lazy"
     />
     {hasMultiple && (
@@ -119,6 +177,14 @@ const hasMultiple = gallery.length > 1;
   </div>
 
   <footer class="flex flex-wrap items-center gap-3 text-sm">
+    {project.caseStudy && (
+      <a
+        href={`/projects/${project.slug}/`}
+        class="text-teal-400 hover:text-teal-DEFAULT transition-colors inline-flex items-center gap-1.5"
+      >
+        <span class="num">case study →</span>
+      </a>
+    )}
     {project.githubUrl ? (
       <a
         href={project.githubUrl}
@@ -180,8 +246,18 @@ const hasMultiple = gallery.length > 1;
       return [img.src];
     })();
 
+    const alts: string[] = (() => {
+      const raw = img.getAttribute('data-alts');
+      if (raw) {
+        try { return JSON.parse(raw); } catch { return []; }
+      }
+      return [img.alt];
+    })();
+
     const render = () => {
       img.src = gallery[idx];
+      const altText = alts[idx];
+      if (altText) img.alt = altText;
       if (counter) counter.textContent = String(idx + 1);
       dots.forEach((d, i) => {
         d.classList.toggle('bg-teal-400', i === idx);

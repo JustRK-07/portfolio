@@ -29,6 +29,7 @@ const projects = defineCollection({
       )
       .optional(),
     role: z.string().optional(),
+    caseStudy: z.boolean().default(false),
     sortOrder: z.number().int().optional(),
   }),
 });
