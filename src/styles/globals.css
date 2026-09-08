@@ -1,28 +1,38 @@
 /* =========================================================
    Rushabh Kalme — Portfolio
-   Design tokens + base styles
+   Design tokens + base styles — cream/orange editorial
    ========================================================= */
 
 @import '@fontsource-variable/inter';
 @import '@fontsource-variable/jetbrains-mono';
 
 :root {
-  /* Color tokens */
-  --navy-950: #07111f;
-  --navy-900: #0b1728;
-  --navy-850: #101e32;
-  --slate-700: #33465d;
-  --slate-500: #71839a;
-  --slate-300: #b3c1d1;
-  --text-primary: #e6eef7;
-  --teal-500: #2dd4bf;
-  --teal-400: #5eead4;
-  --teal-deep: #0f766e;
-  --line: rgba(113, 131, 154, 0.24);
-  --line-strong: rgba(113, 131, 154, 0.4);
-  --surface-hover: rgba(45, 212, 191, 0.07);
+  /* Surface */
+  --cream-50:  #FBF7F0;
+  --cream-100: #F5EFE6;
+  --cream-200: #ECE3D2;
+  --cream-300: #DDD0B8;
 
-  /* Layout */
+  /* Ink (text on cream) */
+  --ink-900:   #1B1A17;
+  --ink-700:   #3A352D;
+  --ink-500:   #6B6356;
+  --ink-300:   #9A8F7C;
+
+  /* Accents */
+  --orange-600: #C8451F;   /* AA-safe for body text on cream */
+  --orange-500: #E55934;   /* signature accent, fills only */
+  --orange-300: #F0A287;   /* hover / soft tints */
+  --sage-600:   #5E7A5E;
+  --sage-400:   #9CB69C;
+  --sky-700:    #2A4A6B;   /* navy used in topographic contour lines */
+
+  /* Lines & shadows */
+  --line:         rgba(27, 26, 23, 0.14);
+  --line-strong:  rgba(27, 26, 23, 0.28);
+  --paper-shadow: 0 1px 0 rgba(27, 26, 23, 0.04), 0 8px 24px -16px rgba(27, 26, 23, 0.18);
+
+  /* Layout (unchanged structurally) */
   --sidebar-width: 280px;
   --content-max: 1280px;
   --section-pad-y: clamp(80px, 10vw, 140px);
@@ -43,8 +53,8 @@
   }
 
   html {
-    background: var(--navy-950);
-    color: var(--text-primary);
+    background: var(--cream-100);
+    color: var(--ink-900);
     font-family: 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -55,17 +65,18 @@
   body {
     min-height: 100dvh;
     line-height: 1.65;
-    background: var(--navy-950);
+    background: var(--cream-100);
+    color: var(--ink-900);
     overflow-x: hidden;
   }
 
   ::selection {
-    background: var(--teal-deep);
-    color: var(--text-primary);
+    background: var(--orange-500);
+    color: var(--cream-50);
   }
 
   :focus-visible {
-    outline: 2px solid var(--teal-400);
+    outline: 2px solid var(--orange-600);
     outline-offset: 4px;
     border-radius: 2px;
   }
@@ -79,6 +90,7 @@
     font-weight: 600;
     line-height: 1.15;
     letter-spacing: -0.01em;
+    color: var(--ink-900);
   }
 }
 
@@ -88,12 +100,13 @@
     font-size: 0.72rem;
     text-transform: uppercase;
     letter-spacing: 0.12em;
-    color: var(--slate-500);
+    color: var(--ink-500);
   }
 
   .num {
     font-family: 'JetBrains Mono Variable', ui-monospace, monospace;
     font-feature-settings: 'tnum' 1;
+    color: var(--ink-900);
   }
 
   .pill {
@@ -104,14 +117,15 @@
     border-radius: 999px;
     font-family: 'JetBrains Mono Variable', ui-monospace, monospace;
     font-size: 0.72rem;
-    color: var(--slate-300);
+    color: var(--ink-700);
     line-height: 1;
+    background: var(--cream-50);
     transition: border-color 200ms ease, color 200ms ease;
   }
 
   .pill:hover {
-    border-color: var(--teal-400);
-    color: var(--teal-400);
+    border-color: var(--orange-500);
+    color: var(--orange-600);
   }
 
   .rule {
@@ -124,8 +138,8 @@
     position: absolute;
     top: -100px;
     left: 0;
-    background: var(--teal-400);
-    color: var(--navy-950);
+    background: var(--orange-500);
+    color: var(--cream-50);
     padding: 12px 16px;
     z-index: 1000;
     font-weight: 600;
@@ -145,11 +159,35 @@
       grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
     }
   }
+
+  /* Polaroid frame around a portrait — slight rotation + paper shadow */
+  .polaroid {
+    box-shadow: var(--paper-shadow);
+    transition: transform 320ms ease;
+  }
+  .polaroid:hover {
+    transform: rotate(0deg) translateY(-2px);
+  }
+
+  /* Editorial section marker badge — small dashed-grid square in the signature orange */
+  .marker {
+    display: inline-block;
+    width: 1rem;
+    height: 1rem;
+    background-color: var(--orange-500);
+    background-image:
+      linear-gradient(to right, var(--cream-50) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--cream-50) 1px, transparent 1px);
+    background-size: 3px 3px;
+    background-position: 1px 1px;
+    flex-shrink: 0;
+  }
 }
 
 @layer utilities {
   .text-balance { text-wrap: balance; }
   .text-pretty  { text-wrap: pretty; }
+  .shadow-paper { box-shadow: var(--paper-shadow); }
 }
 
 /* ----- Typewriter cursor ----- */
@@ -157,7 +195,7 @@
   display: inline-block;
   width: 0.55ch;
   height: 1em;
-  background: var(--teal-400);
+  background: var(--orange-500);
   margin-left: 4px;
   vertical-align: text-bottom;
   animation: blink 1.1s steps(1) infinite;
@@ -184,19 +222,25 @@
   }
 }
 
-/* ----- Sidebar scroll ----- */
+/* ----- Top bar (formerly "sidebar" — kept class name for less churn) ----- */
 .sidebar {
-  background: var(--navy-900);
+  background: var(--cream-50);
   border-right: 1px solid var(--line);
 }
 
-/* ----- Cards ----- */
+/* ----- Paper card surface ----- */
 .card {
-  background: var(--navy-850);
+  background: var(--cream-50);
   border: 1px solid var(--line);
   border-radius: 4px;
+  box-shadow: var(--paper-shadow);
   transition: border-color 220ms ease, transform 220ms ease;
 }
 .card:hover {
-  border-color: var(--teal-400);
+  border-color: var(--orange-500);
 }
+
+/* ----- Dark mode: intentionally locked to cream in v1 ----- */
+/* @media (prefers-color-scheme: dark) {
+  :root { ... same cream tokens ... }
+} */
