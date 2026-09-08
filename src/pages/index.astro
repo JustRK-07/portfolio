@@ -174,25 +174,28 @@ const testimonials = [
         </a>
       </div>
     </div>
-    <nav class="border-t border-line overflow-x-auto" aria-label="Sections">
-      <ul class="flex px-5 sm:px-8 py-2 gap-5 min-w-max">
-        {[
-          { label: '01', href: '#about', name: 'About' },
-          { label: '02', href: '#experience', name: 'Experience' },
-          { label: '03', href: '#projects', name: 'Projects' },
-          { label: '04', href: '#patents', name: 'Patents' },
-          { label: '05', href: '#achievements', name: 'Awards' },
-          { label: '06', href: '#contact', name: 'Contact' },
-        ].map((item) => (
-          <li>
-            <a href={item.href} data-nav-link class="num text-xs text-ink-500 hover:text-accent-600 transition-colors whitespace-nowrap">
-              {item.label} {item.name}
-            </a>
-          </li>
-        ))}
-      </ul>
-    </nav>
   </header>
+
+  {/* ---- Section index strip (always visible, sticky on scroll) ---- */}
+  <nav class="sticky top-0 z-30 bg-cream-100/90 backdrop-blur border-b border-line overflow-x-auto" aria-label="Sections">
+    <ul class="flex px-5 sm:px-8 py-2 gap-5 min-w-max">
+      {[
+        { label: '01', href: '#about', name: 'About' },
+        { label: '02', href: '#featured-cases', name: 'Featured' },
+        { label: '03', href: '#experience', name: 'Experience' },
+        { label: '04', href: '#projects', name: 'Projects' },
+        { label: '05', href: '#patents', name: 'Patents' },
+        { label: '06', href: '#achievements', name: 'Awards' },
+        { label: '07', href: '#contact', name: 'Contact' },
+      ].map((item) => (
+        <li>
+          <a href={item.href} data-nav-link class="num text-xs text-ink-500 hover:text-accent-600 transition-colors whitespace-nowrap">
+            {item.label} {item.name}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </nav>
 
   <main id="main-content" class="min-w-0">
     <div class="px-5 sm:px-8 lg:px-16 pt-12 sm:pt-16 lg:pt-20 pb-24 max-w-content min-w-0 overflow-hidden">
@@ -288,9 +291,8 @@ const testimonials = [
           scholarship="Cummins Merit Scholar '25"
         />
           <Skills skills={skills} />
-          <WritingTeaser posts={posts} />
 
-          <section class="space-y-5" aria-labelledby="achievements-heading">
+          <section id="achievements" class="space-y-5 scroll-mt-24" aria-labelledby="achievements-heading">
             <header class="flex items-center gap-3">
               <span aria-hidden="true" class="marker"></span>
               <h2 id="achievements-heading" class="meta">// milestones</h2>
@@ -307,6 +309,7 @@ const testimonials = [
           </section>
 
           <Testimonials testimonials={testimonials} />
+          <WritingTeaser posts={posts} />
 
           <section class="space-y-5" aria-labelledby="contact-aside-heading">
             <header class="flex items-center gap-3">
