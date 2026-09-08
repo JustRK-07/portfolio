@@ -13,17 +13,17 @@ const year = new Date().getFullYear();
   <div class="px-5 sm:px-8 lg:px-16 py-10 flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-between">
     <div>
       <p class="meta mb-1">// contact</p>
-      <a href={`mailto:${email}`} class="text-ink hover:text-teal-400 transition-colors text-lg">
+      <a href={`mailto:${email}`} class="text-ink-900 hover:text-accent-600 transition-colors text-lg">
         {email}
       </a>
     </div>
     <div class="flex items-center gap-4 text-sm">
-      <a href={githubUrl} target="_blank" rel="noreferrer noopener" class="text-slate-500 hover:text-teal-400 transition-colors">GitHub</a>
-      <a href={linkedinUrl} target="_blank" rel="noreferrer noopener" class="text-slate-500 hover:text-teal-400 transition-colors">LinkedIn</a>
+      <a href={githubUrl} target="_blank" rel="noreferrer noopener" class="text-ink-500 hover:text-accent-600 transition-colors">GitHub</a>
+      <a href={linkedinUrl} target="_blank" rel="noreferrer noopener" class="text-ink-500 hover:text-accent-600 transition-colors">LinkedIn</a>
     </div>
   </div>
   <div class="px-5 sm:px-8 lg:px-16 pb-8 flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-between meta">
     <span>© {year} {name}.</span>
-    <a href="https://github.com/JustRK-07/portfolio" target="_blank" rel="noreferrer noopener" class="hover:text-teal-400 transition-colors">Built with Astro.</a>
+    <a href="https://github.com/JustRK-07/portfolio" target="_blank" rel="noreferrer noopener" class="hover:text-accent-600 transition-colors">Built with Astro.</a>
   </div>
 </footer>
