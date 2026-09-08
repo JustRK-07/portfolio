@@ -26,6 +26,34 @@ const alts: Record<string, string> = {
   'foretell-vista': '7-day demand forecast chart for SKU-5821 with a promo flag and confidence band',
 };
 const coverAlt = alts[slug] ?? `${data.title} cover image`;
+
+// JSON-LD: SoftwareSourceCode for richer Google results.
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site).toString();
+const techList = data.tech ?? data.stack ?? [];
+const jsonLd: Record<string, unknown> = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareSourceCode',
+  name: data.title,
+  description: data.summary,
+  url: canonicalUrl,
+  dateCreated: `${data.year}-01-01`,
+  dateModified: `${data.year}-12-31`,
+  inLanguage: 'en',
+  author: {
+    '@type': 'Person',
+    name: 'Rushabh Kalme',
+    url: 'https://rushabh-kalme.vercel.app',
+  },
+  keywords: techList.join(', '),
+  programmingLanguage: techList,
+  applicationCategory: 'DeveloperApplication',
+  operatingSystem: 'Cross-platform',
+};
+if (data.githubUrl) {
+  jsonLd.codeRepository = data.githubUrl;
+  jsonLd['@type'] = ['SoftwareSourceCode', 'WebApplication'];
+}
+const jsonLdString = JSON.stringify(jsonLd);
 ---
 
 <Base
@@ -34,8 +62,8 @@ const coverAlt = alts[slug] ?? `${data.title} cover image`;
   image={gallery[0]}
 >
   <main id="main-content" class="min-w-0">
-    <article class="px-5 sm:px-8 lg:px-16 pt-12 sm:pt-16 lg:pt-20 pb-24 max-w-content mx-auto">
-      <!-- Back link -->
+    <script type="application/ld+json" set:html={jsonLdString} />
+    <article class="px-5 sm:px-8 lg:px-16 pt-12 sm:pt-16 lg:pt-20 pb-24 max-w-content mx-auto">      <!-- Back link -->
       <a
         href="/#projects"
         class="meta inline-flex items-center gap-2 mb-8 text-ink-500 hover:text-accent-600 transition-colors"
