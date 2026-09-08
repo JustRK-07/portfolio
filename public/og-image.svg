@@ -1,34 +1,47 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#0b1728"/>
-      <stop offset="1" stop-color="#07111f"/>
+      <stop offset="0" stop-color="#F5EFE6"/>
+      <stop offset="1" stop-color="#ECE3D2"/>
     </linearGradient>
-    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(113,131,154,0.08)" stroke-width="1"/>
+    <pattern id="contours" width="60" height="60" patternUnits="userSpaceOnUse">
+      <path d="M0,30 Q15,20 30,30 T60,30" fill="none" stroke="#1B2233" stroke-width="0.6" opacity="0.18"/>
+      <path d="M0,45 Q15,35 30,45 T60,45" fill="none" stroke="#1B2233" stroke-width="0.6" opacity="0.10"/>
+    </pattern>
+    <pattern id="marker" width="6" height="6" patternUnits="userSpaceOnUse">
+      <rect width="6" height="6" fill="#E55934"/>
+      <line x1="0" y1="0" x2="6" y2="6" stroke="#F5EFE6" stroke-width="0.8"/>
+      <line x1="6" y1="0" x2="0" y2="6" stroke="#F5EFE6" stroke-width="0.8"/>
     </pattern>
   </defs>
 
+  <!-- Cream paper background -->
   <rect width="1200" height="630" fill="url(#bg)"/>
-  <rect width="1200" height="630" fill="url(#grid)"/>
+  <rect width="1200" height="630" fill="url(#contours)"/>
 
-  <!-- Left rule -->
-  <line x1="80" y1="80" x2="80" y2="550" stroke="#2dd4bf" stroke-width="2"/>
+  <!-- Left accent rule -->
+  <line x1="80" y1="80" x2="80" y2="550" stroke="#C8451F" stroke-width="3"/>
 
-  <!-- Eyebrow -->
-  <text x="120" y="130" font-family="ui-monospace, SFMono-Regular, monospace" font-size="20" letter-spacing="3" fill="#71839a">// SOFTWARE ENGINEER</text>
+  <!-- Marker + eyebrow -->
+  <rect x="120" y="115" width="14" height="14" fill="url(#marker)"/>
+  <text x="148" y="129" font-family="ui-monospace, SFMono-Regular, monospace" font-size="18" letter-spacing="3" fill="#6B6356">// SOFTWARE ENGINEER</text>
 
-  <!-- Name -->
-  <text x="120" y="260" font-family="ui-serif, Georgia, serif" font-size="96" font-weight="700" fill="#e6eef7" letter-spacing="-2">Rushabh Kalme</text>
+  <!-- Italic "I'm" -->
+  <text x="120" y="220" font-family="'Times New Roman', Times, ui-serif, Georgia, serif" font-style="italic" font-size="64" fill="#C8451F">I'm</text>
+
+  <!-- Giant "Rushabh" -->
+  <text x="120" y="350" font-family="ui-serif, Georgia, 'Times New Roman', serif" font-size="124" font-weight="800" letter-spacing="-3" fill="#1B1A17">Rushabh</text>
 
   <!-- Subtitle -->
-  <text x="120" y="320" font-family="ui-sans-serif, system-ui, sans-serif" font-size="32" fill="#b3c1d1">Backend Systems · Distributed Systems</text>
+  <text x="120" y="400" font-family="ui-sans-serif, system-ui, sans-serif" font-size="28" fill="#3A352D">Backend Systems · Agentic Systems · Edge AI</text>
 
-  <!-- Tagline -->
-  <text x="120" y="430" font-family="ui-monospace, SFMono-Regular, monospace" font-size="22" fill="#2dd4bf">$ multi-agent systems</text>
-  <text x="120" y="465" font-family="ui-monospace, SFMono-Regular, monospace" font-size="22" fill="#5eead4">$ retrieval-augmented products</text>
-  <text x="120" y="500" font-family="ui-monospace, SFMono-Regular, monospace" font-size="22" fill="#5eead4">$ edge AI that works outside the cloud</text>
+  <!-- Tagline block (mono, accent) -->
+  <text x="120" y="475" font-family="ui-monospace, SFMono-Regular, monospace" font-size="20" fill="#C8451F">$ multi-agent systems</text>
+  <text x="120" y="505" font-family="ui-monospace, SFMono-Regular, monospace" font-size="20" fill="#3A352D">$ retrieval-augmented products</text>
 
   <!-- Footer -->
-  <text x="120" y="575" font-family="ui-monospace, SFMono-Regular, monospace" font-size="18" fill="#71839a">rushabh.dev · github.com/JustRK-07</text>
+  <text x="120" y="585" font-family="ui-monospace, SFMono-Regular, monospace" font-size="16" fill="#6B6356">rushabh.dev · github.com/JustRK-07</text>
+
+  <!-- Marker hint at corner -->
+  <rect x="1080" y="555" width="20" height="20" fill="url(#marker)"/>
 </svg>
