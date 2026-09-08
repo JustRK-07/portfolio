@@ -5,7 +5,7 @@
 <h1 align="center">Rushabh Kalme — Personal Portfolio</h1>
 
 <p align="center">
-  <a href="https://rushabh.dev"><img src="https://img.shields.io/badge/LIVE-rushabh.dev-E55934?style=for-the-badge" alt="Live at rushabh.dev" /></a>
+  <a href="https://rushabh-kalme.vercel.app"><img src="https://img.shields.io/badge/LIVE-rushabh--kalme.vercel.app-E55934?style=for-the-badge" alt="Live at rushabh-kalme.vercel.app" /></a>
   <a href="https://github.com/JustRK-07/portfolio/blob/main/LICENSE"><img src="https://img.shields.io/github/license/JustRK-07/portfolio?style=for-the-badge&color=3A352D" alt="License" /></a>
   <img src="https://img.shields.io/github/last-commit/JustRK-07/portfolio/main?style=for-the-badge&color=3A352D" alt="Last commit" />
   <img src="https://img.shields.io/maintenance/yes/2026?style=for-the-badge&color=3A352D" alt="Maintained" />
@@ -21,7 +21,7 @@
 </p>
 
 <p align="center">
-  <sub>Live at <a href="https://rushabh.dev"><b>rushabh.dev</b></a> · built with Astro 5 + MDX + Tailwind CSS, deployed on Vercel.</sub>
+  <sub>Live at <a href="https://rushabh-kalme.vercel.app"><b>rushabh-kalme.vercel.app</b></a> · built with Astro 5 + MDX + Tailwind CSS, deployed on Vercel.</sub>
 </p>
 
 ---
@@ -31,7 +31,7 @@ The source code for my personal portfolio. Nine engineering projects — multi-a
 - **Stack** — Astro 5 (static) · MDX content · Tailwind 3.4 · Vercel adapter · `@vercel/analytics`
 - **Type** — Static site · MDX-backed content collections
 - **Style** — Editorial cream/orange (`#F5EFE6` paper · `#C8451F`/`#E55934` accent · Fraunces + Instrument Serif + Inter + JetBrains Mono)
-- **Live** — https://rushabh.dev
+- **Live** — https://rushabh-kalme.vercel.app
 
 ## What's inside
 
@@ -149,12 +149,12 @@ Mobile (`<lg`) collapses everything to single-column: hero, featured cases, expe
 | Content | [MDX](https://mdxjs.com) | One file per project, full TS-typed frontmatter |
 | Styling | [Tailwind CSS 3.4](https://tailwindcss.com) | Custom cream/orange theme via CSS variables |
 | Fonts | Inter + JetBrains Mono via [`@fontsource`](https://fontsource.org) (render-blocking); Fraunces + Instrument Serif via Google Fonts `media="print" onload` swap |
-| Hosting | [Vercel](https://vercel.com) | Atomic deploys from `main`; attached to `rushabh.dev` |
+| Hosting | [Vercel](https://vercel.com) | Atomic deploys from `main`; attached to the Vercel deployment URL |
 | Analytics | [`@vercel/analytics`](https://vercel.com/analytics) | Server-side page-view tracking |
 
 ## Deployment
 
-Push to `main` → Vercel builds and deploys. `rushabh.dev` is attached in Vercel project settings. Every commit maps to a unique preview URL.
+Push to `main` → Vercel builds and deploys. The deployment URL (`rushabh-kalme.vercel.app`) is attached in Vercel project settings. Every commit maps to a unique preview URL.
 
 ## Contributing / Issues
 

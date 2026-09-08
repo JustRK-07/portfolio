@@ -40,7 +40,7 @@
   <text x="120" y="505" font-family="ui-monospace, SFMono-Regular, monospace" font-size="20" fill="#3A352D">$ retrieval-augmented products</text>
 
   <!-- Footer -->
-  <text x="120" y="585" font-family="ui-monospace, SFMono-Regular, monospace" font-size="16" fill="#6B6356">rushabh.dev · github.com/JustRK-07</text>
+  <text x="120" y="585" font-family="ui-monospace, SFMono-Regular, monospace" font-size="16" fill="#6B6356">rushabh-kalme.vercel.app · github.com/JustRK-07</text>
 
   <!-- Marker hint at corner -->
   <rect x="1080" y="555" width="20" height="20" fill="url(#marker)"/>
