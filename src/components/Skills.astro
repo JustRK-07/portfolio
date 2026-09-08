@@ -1,0 +1,32 @@
+---
+export interface Skill {
+  title: string;
+  blurb: string;
+  tags: string[];
+}
+
+export interface Props {
+  skills: Skill[];
+  title?: string;
+}
+
+const { skills, title = '// capabilities' } = Astro.props;
+---
+
+<section class="space-y-5" aria-labelledby="skills-heading">
+  <header class="flex items-center gap-3">
+    <span aria-hidden="true" class="marker"></span>
+    <h2 id="skills-heading" class="meta">{title}</h2>
+  </header>
+  <div class="grid grid-cols-1 gap-4">
+    {skills.map((s) => (
+      <article class="card p-5">
+        <h3 class="font-display font-semibold text-lg text-ink-900 mb-2 text-balance">{s.title}</h3>
+        <p class="text-sm text-ink-700 text-pretty mb-4 leading-relaxed">{s.blurb}</p>
+        <div class="flex flex-wrap gap-1.5">
+          {s.tags.map((t) => <span class="pill !text-[0.65rem]">{t}</span>)}
+        </div>
+      </article>
+    ))}
+  </div>
+</section>

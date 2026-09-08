@@ -1,0 +1,113 @@
+---
+export interface Testimonial {
+  quote: string;
+  name: string;
+  role: string;
+  initials: string;
+}
+
+export interface Props {
+  testimonials: Testimonial[];
+  title?: string;
+}
+
+const { testimonials, title = '// kind words' } = Astro.props;
+const itemsJson = JSON.stringify(testimonials);
+---
+
+<section
+  class="space-y-5"
+  aria-labelledby="testimonials-heading"
+  data-testimonials
+  data-items={itemsJson}
+>
+  <header class="flex items-center gap-3">
+    <span aria-hidden="true" class="marker"></span>
+    <h2 id="testimonials-heading" class="meta">{title}</h2>
+  </header>
+
+  <article class="card p-6">
+    <p
+      class="font-serif italic text-xl text-ink-900 text-balance leading-snug mb-5"
+      data-testimonial-quote
+    >
+      {testimonials[0].quote}
+    </p>
+    <footer class="flex items-center gap-3 pt-4 border-t border-line">
+      <div
+        class="w-10 h-10 rounded-full bg-cream-200 grid place-items-center font-display text-accent-600 text-sm shrink-0"
+        aria-hidden="true"
+        data-testimonial-initials
+      >
+        {testimonials[0].initials}
+      </div>
+      <div class="min-w-0">
+        <p class="text-sm text-ink-900 font-medium truncate" data-testimonial-name>{testimonials[0].name}</p>
+        <p class="meta text-ink-500 truncate" data-testimonial-role>{testimonials[0].role}</p>
+      </div>
+    </footer>
+  </article>
+
+  <div class="flex gap-1.5" role="tablist" aria-label="Testimonials">
+    {testimonials.map((_, i) => (
+      <button
+        type="button"
+        role="tab"
+        aria-selected={i === 0}
+        aria-label={`Show testimonial ${i + 1}`}
+        class={`h-2 rounded-full transition-all ${
+          i === 0 ? 'w-5 bg-accent-500' : 'w-2 bg-ink-500/40 hover:bg-ink-700'
+        }`}
+        data-testimonial-dot={i}
+      />
+    ))}
+  </div>
+</section>
+
+<script>
+  const wire = (root: HTMLElement) => {
+    if (root.dataset.bound === '1') return;
+    root.dataset.bound = '1';
+
+    let items: Array<{ quote: string; name: string; role: string; initials: string }> = [];
+    try {
+      items = JSON.parse(root.dataset.items || '[]');
+    } catch {
+      items = [];
+    }
+    if (!items.length) return;
+
+    const quote = root.querySelector<HTMLElement>('[data-testimonial-quote]');
+    const initials = root.querySelector<HTMLElement>('[data-testimonial-initials]');
+    const name = root.querySelector<HTMLElement>('[data-testimonial-name]');
+    const role = root.querySelector<HTMLElement>('[data-testimonial-role]');
+    const dots = Array.from(root.querySelectorAll<HTMLButtonElement>('[data-testimonial-dot]'));
+
+    let active = 0;
+    const render = (i: number) => {
+      const t = items[i];
+      if (!t) return;
+      if (quote) quote.textContent = t.quote;
+      if (initials) initials.textContent = t.initials;
+      if (name) name.textContent = t.name;
+      if (role) role.textContent = t.role;
+      dots.forEach((d, di) => {
+        const isActive = di === i;
+        d.setAttribute('aria-selected', String(isActive));
+        d.classList.toggle('w-5', isActive);
+        d.classList.toggle('bg-accent-500', isActive);
+        d.classList.toggle('w-2', !isActive);
+        d.classList.toggle('bg-ink-500/40', !isActive);
+      });
+      active = i;
+    };
+
+    dots.forEach((d, i) =>
+      d.addEventListener('click', () => {
+        if (i !== active) render(i);
+      })
+    );
+  };
+
+  document.querySelectorAll<HTMLElement>('[data-testimonials]').forEach(wire);
+</script>
