@@ -18,7 +18,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site).toString();
 ---
 
 <!doctype html>
-<html lang="en" class="bg-navy-950 text-ink">
+<html lang="en" class="bg-cream-100 text-ink-900">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -29,11 +29,21 @@ const canonical = new URL(Astro.url.pathname, Astro.site).toString();
     <link rel="canonical" href={canonical} />
 
     <!-- Theme -->
-    <meta name="theme-color" content="#07111f" />
-    <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#F5EFE6" />
+    <meta name="color-scheme" content="light" />
 
     <!-- Icons -->
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+
+    <!-- Editorial type pairing: Instrument Serif (italic) + Fraunces (display) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,800&family=Instrument+Serif:ital@0;1&display=swap"
+      media="print"
+      onload="this.setAttribute('media','all')"
+    />
 
     <!-- Open Graph -->
     <meta property="og:type" content="website" />

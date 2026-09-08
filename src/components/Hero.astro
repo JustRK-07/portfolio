@@ -8,19 +8,46 @@ export interface Props {
   pitch: string;
   typewriterLines: string[];
   metrics: Array<{ value: string; label: string }>;
+  // New in v2 — both optional so the index page can adopt them progressively.
+  firstName?: string;
+  polaroid?: string | null;
 }
 
-const { name, eyebrow, pitch, typewriterLines, metrics } = Astro.props;
+const {
+  name,
+  eyebrow,
+  pitch,
+  typewriterLines,
+  metrics,
+  firstName = (name?.split(' ')[0] ?? 'R'),
+  polaroid = null,
+} = Astro.props;
 ---
 
 <section id="about" class="scroll-mt-24">
-  <p class="meta mb-4">{eyebrow}</p>
+  <div class="flex items-center gap-3 mb-8">
+    <span aria-hidden="true" class="marker"></span>
+    <p class="meta">// {eyebrow}</p>
+  </div>
 
-  <h2 class="font-display text-[clamp(2.25rem,8vw,6.5rem)] font-semibold leading-[0.95] tracking-tight text-balance break-words">
-    {name}
-  </h2>
+  <div class="grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-8 lg:gap-12 items-end mb-10">
+    <h1 class="font-display tracking-tight leading-[0.88] text-balance min-w-0">
+      <span class="block font-serif italic font-normal text-accent-500 text-[clamp(1.5rem,5vw,3.5rem)] leading-none mb-2">I'm</span>
+      <span class="block font-extrabold uppercase text-[clamp(3.5rem,14vw,9.5rem)]">{firstName}</span>
+    </h1>
 
-  <p class="mt-4 text-slate-300 text-sm sm:text-base lg:text-lg max-w-full">
+    <figure class="polaroid w-[160px] sm:w-[200px] lg:w-[240px] rotate-[2deg] shrink-0 self-end">
+      <div class="bg-cream-50 p-3 pb-10 shadow-paper">
+        {polaroid
+          ? <img src={polaroid} alt={`Portrait of ${name}`} class="w-full aspect-[4/5] object-cover" loading="eager" width="240" height="300" />
+          : <div class="w-full aspect-[4/5] bg-cream-200 grid place-items-center font-display text-[5rem] sm:text-[6rem] text-accent-500 leading-none">{firstName.charAt(0)}</div>
+        }
+        <figcaption class="text-center mt-3 font-serif italic text-sm text-ink-700">— {firstName}, 2026</figcaption>
+      </div>
+    </figure>
+  </div>
+
+  <p class="max-w-prose-thin text-ink-700 text-base sm:text-lg text-pretty mb-6">
     {pitch}
   </p>
 

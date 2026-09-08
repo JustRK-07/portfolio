@@ -5,17 +5,17 @@ export interface Props {
   speedMs?: number;
 }
 
-const { lines, prompt = '$', speedMs = 50 } = Astro.props;
+const { lines, prompt = '~/rushabh', speedMs = 50 } = Astro.props;
 const fallback = lines[0] ?? '';
 ---
 
 <div
-  class="typewriter font-mono text-sm sm:text-base lg:text-lg text-slate-300 break-words"
+  class="typewriter font-mono text-sm sm:text-base lg:text-lg text-ink-700 break-words"
   data-typewriter
   data-lines={JSON.stringify(lines)}
   data-speed={speedMs}
 >
-  <span class="text-teal-400" aria-hidden="true">{prompt}&nbsp;</span><span class="typewriter-text text-pretty" aria-live="polite">{fallback}</span><span class="cursor" aria-hidden="true"></span>
+  <span class="text-accent-500" aria-hidden="true">{prompt}&nbsp;</span><span class="typewriter-text text-pretty" aria-live="polite">{fallback}</span><span class="cursor" aria-hidden="true"></span>
 </div>
 
 <script>
