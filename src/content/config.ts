@@ -31,6 +31,16 @@ const projects = defineCollection({
     role: z.string().optional(),
     caseStudy: z.boolean().default(false),
     sortOrder: z.number().int().optional(),
+    partner: z
+      .object({
+        name: z.string(),
+        location: z.string().optional(),
+        founded: z.number().int().optional(),
+        tagline: z.string().optional(),
+        url: z.string().url().optional(),
+        description: z.string().optional(),
+      })
+      .optional(),
   }),
 });
 

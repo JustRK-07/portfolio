@@ -98,6 +98,42 @@ const coverAlt = alts[slug] ?? `${data.title} cover image`;
         class="w-full rounded border border-line bg-cream-200 mb-12"
       />
 
+      <!-- Partner block (only when frontmatter `partner:` is set) -->
+      {data.partner && (
+        <section class="mb-16">
+          <aside class="card border-l-4 !border-accent-500 p-6 sm:p-8 bg-cream-50">
+            <div class="flex items-center gap-2 meta mb-3">
+              <span class="inline-block w-2 h-2 bg-accent-500" aria-hidden="true"></span>
+              <span>// partner</span>
+              <span class="text-ink-300">·</span>
+              <span>industry engagement</span>
+            </div>
+            <h2 class="font-display font-extrabold text-xl sm:text-2xl text-ink-900 tracking-tight leading-tight mb-2">
+              {data.partner.url ? (
+                <a
+                  href={data.partner.url}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  class="hover:text-accent-600 transition-colors"
+                >
+                  {data.partner.name}
+                </a>
+              ) : (
+                data.partner.name
+              )}
+            </h2>
+            <p class="meta text-ink-500 mb-4">
+              {data.partner.location}{data.partner.founded && ` · est. ${data.partner.founded}`}{data.partner.tagline && ` · ${data.partner.tagline}`}
+            </p>
+            {data.partner.description && (
+              <p class="text-ink-700 text-pretty leading-relaxed max-w-prose-thin">
+                {data.partner.description}
+              </p>
+            )}
+          </aside>
+        </section>
+      )}
+
       {data.metrics && data.metrics.length > 0 && (
         <section class="mb-16">
           <h2 class="meta mb-4">// outcome</h2>
