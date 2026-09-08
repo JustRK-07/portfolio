@@ -42,6 +42,7 @@ const projects: Project[] = projectsRaw.map((p) => ({
   featured: p.data.featured,
   caseStudy: p.data.caseStudy,
   metrics: p.data.metrics,
+  partner: p.data.partner,
 }));
 
 // Featured cases (top 2 by sortOrder among featured projects).
@@ -227,6 +228,7 @@ const testimonials = [
                   summary={p.summary}
                   metric={featuredMetric(p)}
                   thumbnail={p.thumbnail}
+                  partner={p.partner ? { name: p.partner.name, url: p.partner.url ?? '#' } : undefined}
                 />
               ))}
             </section>

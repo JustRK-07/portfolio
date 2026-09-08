@@ -6,6 +6,11 @@ export interface Metric {
   value: string;
 }
 
+export interface Partner {
+  name: string;
+  url: string;
+}
+
 export interface Props {
   index: number;
   total: number;
@@ -16,6 +21,7 @@ export interface Props {
   summary: string;
   metric: Metric;
   thumbnail: string;
+  partner?: Partner;
 }
 
 const {
@@ -28,6 +34,7 @@ const {
   summary,
   metric,
   thumbnail,
+  partner,
 } = Astro.props;
 
 const idx = String(index).padStart(2, '0');
@@ -59,7 +66,23 @@ const totalPadded = String(total).padStart(2, '0');
           <p class="meta text-ink-500 mb-1">{metric.label}</p>
           <p class="num text-2xl text-ink-900 truncate">{metric.value}</p>
         </div>
-        <span class="meta text-ink-500 shrink-0">{year}</span>
+        <div class="text-right shrink-0 flex flex-col items-end gap-0.5">
+          <span class="meta text-ink-500">{year}</span>
+          {partner && (
+            <a
+              href={partner.url}
+              target="_blank"
+              rel="noreferrer noopener"
+              class="group text-[0.78rem] font-mono text-accent-600 hover:text-accent-500 transition-colors inline-flex items-center gap-1 mt-0.5"
+              aria-label={`Partner: ${partner.name}`}
+            >
+              <span class="border-b border-accent-300/60 group-hover:border-accent-500 transition-colors">{partner.name}</span>
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true" class="opacity-70 group-hover:opacity-100 group-hover:translate-x-[1px] transition-all">
+                <path d="M7 17L17 7M17 7H8M17 7v9"/>
+              </svg>
+            </a>
+          )}
+        </div>
       </footer>
     </div>
   </article>

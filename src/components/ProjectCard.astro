@@ -17,6 +17,14 @@ export interface Project {
   featured: boolean;
   caseStudy?: boolean;
   metrics?: Array<{ label: string; value: string }>;
+  partner?: {
+    name: string;
+    url?: string;
+    location?: string;
+    founded?: number;
+    tagline?: string;
+    description?: string;
+  };
 }
 
 export interface Props {
