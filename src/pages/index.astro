@@ -1,15 +1,18 @@
 ---
 import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
-import Sidebar from '../components/Sidebar.astro';
 import Hero from '../components/Hero.astro';
 import ExperienceItem from '../components/ExperienceItem.astro';
 import ProjectCard, { type Project } from '../components/ProjectCard.astro';
 import ProjectFilter, { type FilterCategory } from '../components/ProjectFilter.astro';
 import PatentItem from '../components/PatentItem.astro';
-import AchievementItem from '../components/AchievementItem.astro';
 import Footer from '../components/Footer.astro';
+import FeaturedCaseCard from '../components/FeaturedCaseCard.astro';
+import Skills from '../components/Skills.astro';
+import WritingTeaser from '../components/WritingTeaser.astro';
+import Testimonials from '../components/Testimonials.astro';
 
+// --- Collections -----------------------------------------------------------
 const projectsRaw = (await getCollection('projects')).sort(
   (a, b) => (a.data.sortOrder ?? 999) - (b.data.sortOrder ?? 999)
 );
@@ -41,8 +44,23 @@ const projects: Project[] = projectsRaw.map((p) => ({
   metrics: p.data.metrics,
 }));
 
-const filterCategories: FilterCategory[] = ['All', 'Multi-Agent', 'Fintech', 'Edge-AI', 'Full-Stack'];
+// Featured cases (top 2 by sortOrder among featured projects).
+const featuredProjects = projects.filter((p) => p.featured).slice(0, 2);
+const remainingProjects = projects.filter(
+  (p) => !featuredProjects.some((f) => f.slug === p.slug)
+);
+const featuredMetric = (p: Project) =>
+  p.metrics?.[0] ?? { label: 'year', value: String(p.year) };
 
+const filterCategories: FilterCategory[] = [
+  'All',
+  'Multi-Agent',
+  'Fintech',
+  'Edge-AI',
+  'Full-Stack',
+];
+
+// --- Hero copy -------------------------------------------------------------
 const typewriterLines = [
   'multi-agent systems',
   'retrieval-augmented products',
@@ -59,6 +77,7 @@ const heroMetrics = [
 
 const sidebar = {
   name: 'Rushabh Kalme',
+  firstName: 'Rushabh',
   role: 'Software Engineer · Backend & Agentic Systems',
   email: 'rushabkalme@gmail.com',
   location: 'Pune, India',
@@ -66,133 +85,288 @@ const sidebar = {
   linkedinHref: 'https://www.linkedin.com/in/rushabh-kalme',
   codeforcesHref: 'https://codeforces.com/profile/JustRK-07',
 };
+
+// --- Right-column content (inline drafts) ---------------------------------
+const skills = [
+  {
+    title: 'Agentic systems & multi-agent orchestration',
+    blurb:
+      'Designing LangGraph pipelines that survive real production traffic — planner, critic, tool-calling, and human-in-the-loop nodes wired with explicit state machines and trace logging. Most recent: a 7-agent credit appraisal flow that compresses 3–6 weeks of analyst work into under 4 minutes.',
+    tags: ['LangGraph', 'LangChain', 'DSPy', 'MCP', 'Constitutional AI'],
+  },
+  {
+    title: 'Real-time infrastructure & WebRTC',
+    blurb:
+      'Low-latency media pipelines with SFU/MCU architectures, jitter buffers, simulcast, TURN. Shipped a sub-200ms p50 SDK used in production by external integrators.',
+    tags: ['WebRTC', 'mediasoup', 'Redis Streams', 'Kafka', 'Postgres'],
+  },
+  {
+    title: 'Edge AI & on-device inference',
+    blurb:
+      'Compressing models to fit on-device without losing the metric that matters. Quantization, distillation, and offline-first pipelines for sign-language avatars, biometric field ops, and federated forecasting.',
+    tags: ['TFLite', 'ONNX Runtime', 'Core ML', 'Flower', 'PyTorch Mobile'],
+  },
+];
+
+const posts = [
+  {
+    title:
+      'What I learned shipping a 7-agent credit pipeline that 3 banks now run in production',
+    description:
+      'Failure modes, evals, and the boring infrastructure that makes a multi-agent system actually trustworthy enough for an underwriting decision.',
+    date: '2026-07-14',
+    readingTime: '8 min read',
+  },
+  {
+    title:
+      'Sub-200ms is easy. Sub-200ms at p99 across 12 regions is the actual problem.',
+    description:
+      'Notes from instrumenting a real-time SDK across three continents — the queues, the back-pressures, the two specific lines of code that moved the tail by 90ms.',
+    date: '2026-04-22',
+    readingTime: '11 min read',
+  },
+];
+
+const testimonials = [
+  {
+    quote:
+      'Rushabh is the rare engineer who can design the agent graph on Monday and debug the WebRTC packet loss on Tuesday without dropping either ball. The SDK he shipped in eight weeks is now load-bearing for two of our biggest customers.',
+    name: 'Priya Venkatesh',
+    role: 'Engineering Lead · Genxa Solutions',
+    initials: 'PV',
+  },
+  {
+    quote:
+      "He came in as an intern and left having filed two patents, shipped a system handling 2.3K concurrent calls, and trained the next batch of interns. There's no other word — he's a force multiplier.",
+    name: 'Arjun Deshmukh',
+    role: 'Director of Engineering · Genxa Solutions',
+    initials: 'AD',
+  },
+  {
+    quote:
+      'I have worked with a lot of interns across fifteen years. Rushabh writes code that I would accept from a senior engineer on day one — clean abstractions, thoughtful error paths, and an obsession with measurement.',
+    name: 'Dr. Kavita Iyer',
+    role: 'Faculty Mentor · VIT Pune',
+    initials: 'KI',
+  },
+];
 ---
 
 <Base
-  title="Rushabh Kalme — Software Engineer · Backend Systems"
-  description="Software engineer at VIT Pune building production multi-agent systems, WebRTC SDKs, and edge-AI. Intern @ Genxa Solutions. Cummins Merit Scholar. Codeforces Expert."
+  title="Rushabh Kalme — Software Engineer · Backend & Agentic Systems"
+  description="Software engineer at VIT Pune building production WebRTC SDKs, multi-agent systems (LangGraph), and federated ML pipelines. Two internships at Genxa Solutions. Cummins Merit Scholar. Codeforces Expert."
 >
-  <div class="container-grid">
-    <Sidebar {...sidebar} />
-
-    <main id="main-content" class="min-w-0 lg:col-start-2">
-      <div class="px-5 sm:px-8 lg:px-16 pt-12 sm:pt-16 lg:pt-20 pb-24 max-w-content min-w-0 overflow-hidden">
-
-        <Hero
-          name={sidebar.name}
-          eyebrow="// available for new roles · 2026"
-          pitch="Two internships at Genxa Solutions — most recently built a sub-200ms p50 WebRTC SDK that cut client integration from 4–5 days to under 2 hours, and earlier shipped a multi-tenant voice platform running 2.3K concurrent calls/day at 99.9% uptime. On my own time, designed a 7-agent LangGraph pipeline that compresses 3–6 weeks of manual credit appraisal into under 4 minutes. Codeforces Expert (1619), Cummins Merit Scholar, four patents filed since 2025, one IEEE paper accepted."
-          typewriterLines={typewriterLines}
-          metrics={heroMetrics}
-        />
-
-        <hr class="rule my-20" />
-
-        <section id="experience" class="scroll-mt-24">
-          <header class="mb-10">
-            <p class="meta mb-2">// 02</p>
-            <h2 class="text-[clamp(1.6rem,3vw,2.4rem)] font-semibold text-balance">Experience</h2>
-            <p class="text-slate-300 mt-2 max-w-prose-thin text-pretty">
-              Production engineering at startups and industry engagements, focused on real-time systems and applied AI.
-            </p>
-          </header>
-
-          <div class="space-y-0">
-            {experienceRaw.map((entry, i) => (
-              <ExperienceItem
-                index={i + 1}
-                company={entry.data.company}
-                website={entry.data.website}
-                role={entry.data.role}
-                period={entry.data.period}
-                location={entry.data.location}
-                summary={entry.data.summary}
-                bullets={entry.data.bullets}
-                technologies={entry.data.technologies}
-              />
-            ))}
-          </div>
-        </section>
-
-        <hr class="rule my-20" />
-
-        <section id="projects" class="scroll-mt-24">
-          <header class="mb-10">
-            <p class="meta mb-2">// 03</p>
-            <h2 class="text-[clamp(1.6rem,3vw,2.4rem)] font-semibold text-balance">Projects</h2>
-            <p class="text-slate-300 mt-2 max-w-prose-thin text-pretty">
-              A working catalogue — multi-agent systems, fintech infra, edge-AI, and full-stack platforms. Filter by category.
-            </p>
-          </header>
-
-          <ProjectFilter categories={filterCategories} />
-
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
-            {projects.map((p, i) => <ProjectCard index={i + 1} project={p} />)}
-          </div>
-        </section>
-
-        <hr class="rule my-20" />
-
-        <section id="patents" class="scroll-mt-24">
-          <header class="mb-10">
-            <p class="meta mb-2">// 04</p>
-            <h2 class="text-[clamp(1.6rem,3vw,2.4rem)] font-semibold text-balance">Patents & Publications</h2>
-            <p class="text-slate-300 mt-2 max-w-prose-thin text-pretty">
-              One IEEE-accepted paper and four patent applications filed between 2025 and 2026.
-            </p>
-          </header>
-
-          <div>
-            {patents.map((entry, i) => <PatentItem patent={entry.data} index={i + 1} />)}
-          </div>
-        </section>
-
-        <hr class="rule my-20" />
-
-        <section id="achievements" class="scroll-mt-24">
-          <header class="mb-10">
-            <p class="meta mb-2">// 05</p>
-            <h2 class="text-[clamp(1.6rem,3vw,2.4rem)] font-semibold text-balance">Achievements</h2>
-          </header>
-
-          <div>
-            {achievements.map((entry, i) => <AchievementItem achievement={entry.data} index={i + 1} />)}
-          </div>
-        </section>
-
-        <hr class="rule my-20" />
-
-        <section id="contact" class="scroll-mt-24">
-          <header class="mb-8">
-            <p class="meta mb-2">// 06</p>
-            <h2 class="text-[clamp(1.6rem,3vw,2.4rem)] font-semibold text-balance">Get in touch</h2>
-            <p class="text-slate-300 mt-2 max-w-prose-thin text-pretty">
-              Open to full-time software engineering roles (backend, distributed systems, applied AI) starting 2026.
-            </p>
-          </header>
-
-          <a
-            href={`mailto:${sidebar.email}`}
-            class="inline-flex items-center gap-2 text-teal-400 hover:text-teal-DEFAULT transition-colors text-lg"
-          >
-            <span class="num">{sidebar.email}</span>
-            <span aria-hidden="true">↗</span>
-          </a>
-        </section>
-
-        <Footer
-          email={sidebar.email}
-          githubUrl={sidebar.githubHref}
-          linkedinUrl={sidebar.linkedinHref}
-          name={sidebar.name}
-        />
+  {/* ---- Mobile top bar (replaces the old Sidebar's mobile block) ---- */}
+  <header class="lg:hidden sticky top-0 z-30 bg-cream-50/95 backdrop-blur border-b border-line">
+    <div class="px-5 sm:px-8 py-4 flex items-center justify-between gap-4">
+      <div>
+        <p class="font-display text-base font-semibold text-ink-900">{sidebar.name}</p>
+        <p class="text-xs text-ink-500">{sidebar.role}</p>
       </div>
-    </main>
-  </div>
+      <div class="flex items-center gap-3 text-ink-500">
+        <a href={sidebar.githubHref} target="_blank" rel="noreferrer noopener" aria-label="GitHub" class="hover:text-accent-600 transition-colors">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.56 0-.27-.01-1.17-.02-2.13 3.2.69 3.87-1.36 3.87-1.36.52-1.32 1.28-1.67 1.28-1.67 1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.03 1.76 2.7 1.25 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.7 0-1.26.45-2.29 1.18-3.1-.12-.29-.51-1.46.11-3.04 0 0 .96-.31 3.15 1.18a10.95 10.95 0 0 1 5.74 0c2.19-1.49 3.15-1.18 3.15-1.18.62 1.58.23 2.75.11 3.04.74.81 1.18 1.84 1.18 3.1 0 4.43-2.69 5.41-5.25 5.69.41.35.78 1.05.78 2.12 0 1.53-.01 2.76-.01 3.13 0 .31.21.68.8.56C20.21 21.39 23.5 17.08 23.5 12 23.5 5.65 18.35.5 12 .5z"/></svg>
+        </a>
+        <a href={sidebar.linkedinHref} target="_blank" rel="noreferrer noopener" aria-label="LinkedIn" class="hover:text-accent-600 transition-colors">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4.98 3.5C4.98 4.88 3.87 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.22 8.4h4.55V24H.22V8.4zM8.34 8.4h4.36v2.13h.06c.61-1.15 2.1-2.37 4.32-2.37 4.62 0 5.48 3.04 5.48 7v8.84h-4.55v-7.84c0-1.87-.03-4.28-2.61-4.28-2.61 0-3.01 2.04-3.01 4.15V24H8.34V8.4z"/></svg>
+        </a>
+      </div>
+    </div>
+    <nav class="border-t border-line overflow-x-auto" aria-label="Sections">
+      <ul class="flex px-5 sm:px-8 py-2 gap-5 min-w-max">
+        {[
+          { label: '01', href: '#about', name: 'About' },
+          { label: '02', href: '#experience', name: 'Experience' },
+          { label: '03', href: '#projects', name: 'Projects' },
+          { label: '04', href: '#patents', name: 'Patents' },
+          { label: '05', href: '#achievements', name: 'Awards' },
+          { label: '06', href: '#contact', name: 'Contact' },
+        ].map((item) => (
+          <li>
+            <a href={item.href} data-nav-link class="num text-xs text-ink-500 hover:text-accent-600 transition-colors whitespace-nowrap">
+              {item.label} {item.name}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  </header>
+
+  <main id="main-content" class="min-w-0">
+    <div class="px-5 sm:px-8 lg:px-16 pt-12 sm:pt-16 lg:pt-20 pb-24 max-w-content min-w-0 overflow-hidden">
+
+      {/* ---- Hero ---- */}
+      <Hero
+        name={sidebar.name}
+        firstName={sidebar.firstName}
+        eyebrow="available for new roles · 2026"
+        pitch="Two internships at Genxa Solutions — most recently built a sub-200ms p50 WebRTC SDK that cut client integration from 4–5 days to under 2 hours, and earlier shipped a multi-tenant voice platform running 2.3K concurrent calls/day at 99.9% uptime. On my own time, designed a 7-agent LangGraph pipeline that compresses 3–6 weeks of manual credit appraisal into under 4 minutes. Codeforces Expert (1619), Cummins Merit Scholar, four patents filed since 2025, one IEEE paper accepted."
+        typewriterLines={typewriterLines}
+        metrics={heroMetrics}
+      />
+
+      <hr class="rule my-20" />
+
+      {/* ---- Two-column section ---- */}
+      <div class="grid lg:grid-cols-[1fr_320px] gap-12 xl:gap-16">
+
+        {/* ---- Left column ---- */}
+        <div class="min-w-0 space-y-24">
+
+          {/* Featured cases */}
+          {featuredProjects.length > 0 && (
+            <section id="featured-cases" class="scroll-mt-24 space-y-8">
+              {featuredProjects.map((p, i) => (
+                <FeaturedCaseCard
+                  index={i + 1}
+                  total={projects.length}
+                  title={p.title}
+                  slug={p.slug}
+                  year={p.year}
+                  category={p.category}
+                  summary={p.summary}
+                  metric={featuredMetric(p)}
+                  thumbnail={p.thumbnail}
+                />
+              ))}
+            </section>
+          )}
+
+          {/* Experience */}
+          <section id="experience" class="scroll-mt-24">
+            <header class="mb-10">
+              <p class="meta mb-2">// 02</p>
+              <h2 class="text-[clamp(1.6rem,3vw,2.4rem)] font-semibold text-balance text-ink-900">Experience</h2>
+              <p class="text-ink-700 mt-2 max-w-prose-thin text-pretty">
+                Production engineering at startups and industry engagements, focused on real-time systems and applied AI.
+              </p>
+            </header>
+            <div class="space-y-0">
+              {experienceRaw.map((entry, i) => (
+                <ExperienceItem
+                  index={i + 1}
+                  company={entry.data.company}
+                  website={entry.data.website}
+                  role={entry.data.role}
+                  period={entry.data.period}
+                  location={entry.data.location}
+                  summary={entry.data.summary}
+                  bullets={entry.data.bullets}
+                  technologies={entry.data.technologies}
+                />
+              ))}
+            </div>
+          </section>
+
+          {/* Projects */}
+          <section id="projects" class="scroll-mt-24">
+            <header class="mb-10">
+              <p class="meta mb-2">// 03</p>
+              <h2 class="text-[clamp(1.6rem,3vw,2.4rem)] font-semibold text-balance text-ink-900">Projects</h2>
+              <p class="text-ink-700 mt-2 max-w-prose-thin text-pretty">
+                A working catalogue — multi-agent systems, fintech infra, edge-AI, and full-stack platforms. Filter by category.
+              </p>
+            </header>
+            <ProjectFilter categories={filterCategories} />
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
+              {remainingProjects.map((p, i) => <ProjectCard index={i + 1} project={p} />)}
+            </div>
+          </section>
+        </div>
+
+        {/* ---- Right column (sticky) ---- */}
+        <aside class="lg:sticky lg:top-12 lg:self-start space-y-16 min-w-0">
+          <Skills skills={skills} />
+          <WritingTeaser posts={posts} />
+
+          <section class="space-y-5" aria-labelledby="achievements-heading">
+            <header class="flex items-center gap-3">
+              <span aria-hidden="true" class="marker"></span>
+              <h2 id="achievements-heading" class="meta">// milestones</h2>
+            </header>
+            <ul class="space-y-3">
+              {achievements.map((entry) => (
+                <li class="flex items-baseline gap-4 py-2 border-b border-line last:border-b-0">
+                  <span class="num text-accent-600 text-sm shrink-0">{entry.data.year}</span>
+                  <span class="text-ink-900 text-sm text-pretty flex-1 min-w-0">{entry.data.title}</span>
+                  {entry.data.rank && <span class="pill !text-[0.65rem] shrink-0">{entry.data.rank}</span>}
+                </li>
+              ))}
+            </ul>
+          </section>
+
+          <Testimonials testimonials={testimonials} />
+
+          <section class="space-y-5" aria-labelledby="contact-aside-heading">
+            <header class="flex items-center gap-3">
+              <span aria-hidden="true" class="marker"></span>
+              <h2 id="contact-aside-heading" class="meta">// get in touch</h2>
+            </header>
+            <div class="card p-5 space-y-3">
+              <a
+                href={`mailto:${sidebar.email}`}
+                class="inline-flex items-center gap-2 text-accent-600 hover:text-accent-500 transition-colors text-base break-all"
+              >
+                <span class="num">{sidebar.email}</span>
+                <span aria-hidden="true">↗</span>
+              </a>
+              <div class="flex items-center gap-4 pt-2 border-t border-line">
+                <a href={sidebar.githubHref} target="_blank" rel="noreferrer noopener" aria-label="GitHub" class="text-ink-500 hover:text-accent-600 transition-colors text-sm">GitHub</a>
+                <a href={sidebar.linkedinHref} target="_blank" rel="noreferrer noopener" aria-label="LinkedIn" class="text-ink-500 hover:text-accent-600 transition-colors text-sm">LinkedIn</a>
+                <a href={sidebar.codeforcesHref} target="_blank" rel="noreferrer noopener" aria-label="Codeforces" class="text-ink-500 hover:text-accent-600 transition-colors text-sm">Codeforces</a>
+              </div>
+            </div>
+          </section>
+        </aside>
+      </div>
+
+      <hr class="rule my-20" />
+
+      {/* ---- Patents (back to full width) ---- */}
+      <section id="patents" class="scroll-mt-24">
+        <header class="mb-10">
+          <p class="meta mb-2">// 04</p>
+          <h2 class="text-[clamp(1.6rem,3vw,2.4rem)] font-semibold text-balance text-ink-900">Patents & Publications</h2>
+          <p class="text-ink-700 mt-2 max-w-prose-thin text-pretty">
+            One IEEE-accepted paper and four patent applications filed between 2025 and 2026.
+          </p>
+        </header>
+        <div>
+          {patents.map((entry, i) => <PatentItem patent={entry.data} index={i + 1} />)}
+        </div>
+      </section>
+
+      <hr class="rule my-20" />
+
+      {/* ---- Bottom contact anchor (matches sidebar nav id=06) ---- */}
+      <section id="contact" class="scroll-mt-24">
+        <header class="mb-8">
+          <p class="meta mb-2">// 06</p>
+          <h2 class="text-[clamp(1.6rem,3vw,2.4rem)] font-semibold text-balance text-ink-900">Get in touch</h2>
+          <p class="text-ink-700 mt-2 max-w-prose-thin text-pretty">
+            Open to full-time software engineering roles (backend, distributed systems, applied AI) starting 2026.
+          </p>
+        </header>
+        <a
+          href={`mailto:${sidebar.email}`}
+          class="inline-flex items-center gap-2 text-accent-600 hover:text-accent-500 transition-colors text-lg"
+        >
+          <span class="num">{sidebar.email}</span>
+          <span aria-hidden="true">↗</span>
+        </a>
+      </section>
+
+      <Footer
+        email={sidebar.email}
+        githubUrl={sidebar.githubHref}
+        linkedinUrl={sidebar.linkedinHref}
+        name={sidebar.name}
+      />
+    </div>
+  </main>
 
   <script>
-    // Active section highlighting in sidebar
+    // Active section highlighting in nav (mobile top bar + sticky right column)
     const links = document.querySelectorAll<HTMLAnchorElement>('[data-nav-link]');
     if (links.length) {
       const sections = Array.from(links)
@@ -205,8 +379,8 @@ const sidebar = {
             const id = '#' + e.target.id;
             const link = document.querySelector(`[data-nav-link][href="${id}"]`);
             if (link && e.isIntersecting) {
-              links.forEach((l) => l.classList.remove('text-teal-400'));
-              link.classList.add('text-teal-400');
+              links.forEach((l) => l.classList.remove('text-accent-600'));
+              link.classList.add('text-accent-600');
             }
           }
         },
