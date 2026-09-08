@@ -38,9 +38,9 @@ const { categories } = Astro.props;
       buttons.forEach((b) => {
         b.setAttribute('aria-pressed', String(b.dataset.filter === cat));
         if (b.dataset.filter === cat) {
-          b.classList.add('!border-teal-400', '!text-teal-400');
+          b.classList.add('!border-accent-500', '!text-accent-600', '!bg-accent-500/10');
         } else {
-          b.classList.remove('!border-teal-400', '!text-teal-400');
+          b.classList.remove('!border-accent-500', '!text-accent-600', '!bg-accent-500/10');
         }
       });
     };
