@@ -12,6 +12,10 @@ images:
   - "/images/projects/screens/bekaert-agv-4.webp"
   - "/images/projects/screens/bekaert-agv-5.webp"
   - "/images/projects/screens/bekaert-agv-6.webp"
+video:
+  src: "/videos/bekaert-agv-02.mp4"
+  poster: "/images/projects/screens/bekaert-agv.webp"
+  caption: "The rover tracking the test line on the workshop floor."
 featured: true
 caseStudy: true
 role: "Software · computer vision · AI/ML · platform development"
@@ -136,34 +140,24 @@ speed and not a duty cycle.
 
 ## Telemetry dashboard
 
-The operator surface for the platform — chassis monitor on top, then the working tabs.
-Screens below are the real dashboard running against the platform.
+The operator surface for the platform — chassis monitor on top, then the working tabs. The
+screens in the gallery above are the real dashboard running against the platform.
 
-![Chassis monitor — per-motor driver, PWM, direction and encoder counts](/images/projects/screens/bekaert-agv.webp)
+The **chassis monitor** is the always-on view: target against measured wheel speed, applied
+PWM, and live encoder counts for all four motors.
 
-The chassis monitor is the always-on view: target against measured wheel speed, applied PWM,
-and live encoder counts for all four motors.
+The **drive view** puts the annotated camera feed under the monitor, with the line offset,
+angle, lookahead and curvature the decision loop is actually working from.
 
-![Drive tab — annotated camera feed with line tracking](/images/projects/screens/bekaert-agv-2.webp)
+The **motor test** tab drives one side at a time, in encoder-PID or raw-PWM mode, with a
+0 → 100 → 0 ramp. It is the bench check that a driver, a motor and an encoder agree before the
+robot is allowed near a line.
 
-The drive view puts the annotated camera feed under the monitor, with the line offset, angle,
-lookahead and curvature the decision loop is actually working from.
-
-![Motor test — each driver on its own](/images/projects/screens/bekaert-agv-4.webp)
-
-The motor test tab drives one side at a time, in encoder-PID or raw-PWM mode, with a 0 → 100 → 0
-ramp. It is the bench check that a driver, a motor and an encoder agree before the robot is
-allowed near a line.
-
-![LiDAR obstacle safety — stop, slow and clear zones](/images/projects/screens/bekaert-agv-5.webp)
-
-LiDAR safety runs three zones: stop, slow and clear. A sensor that goes stale or drops off
+**LiDAR safety** runs three zones: stop, slow and clear. A sensor that goes stale or drops off
 stops the rover rather than letting it drive blind.
 
-![Recording — frames plus a detection log](/images/projects/screens/bekaert-agv-6.webp)
-
-Recording captures the camera frames and a log row per frame, so a fault can be traced back to
-the frame that caused it.
+**Recording** captures the camera frames and a log row per frame, so a fault can be traced back
+to the frame that caused it.
 
 ## On the rover
 
@@ -181,22 +175,6 @@ the frame that caused it.
     Your browser does not support the video tag.
   </video>
   <figcaption class="meta mt-3">AGV on the bench — drive train, encoder feedback and the operator dashboard.</figcaption>
-</figure>
-
-<figure class="my-6">
-  <video
-    controls
-    muted
-    loop
-    playsinline
-    preload="metadata"
-    poster="/images/projects/screens/bekaert-agv-2.webp"
-    class="w-full rounded border border-line bg-cream-200"
-  >
-    <source src="/videos/bekaert-agv-02.mp4" type="video/mp4" />
-    Your browser does not support the video tag.
-  </video>
-  <figcaption class="meta mt-3">Line-following run under live telemetry.</figcaption>
 </figure>
 
 ## Status

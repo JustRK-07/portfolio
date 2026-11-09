@@ -20,6 +20,13 @@ const projects = defineCollection({
     coverImage: z.string().optional(),
     architectureDiagram: z.string().optional(),
     images: z.array(z.string()).optional(),
+    video: z
+      .object({
+        src: z.string(),
+        poster: z.string().optional(),
+        caption: z.string().optional(),
+      })
+      .optional(),
     metrics: z
       .array(
         z.object({

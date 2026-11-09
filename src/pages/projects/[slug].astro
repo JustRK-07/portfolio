@@ -119,6 +119,26 @@ const jsonLdString = JSON.stringify(jsonLd);
         </div>
       </header>
 
+      <!-- Video (above the cover image) -->
+      {data.video && (
+        <figure class="mb-12">
+          <video
+            src={data.video.src}
+            poster={data.video.poster}
+            autoplay
+            muted
+            loop
+            playsinline
+            controls
+            preload="metadata"
+            class="w-full max-w-md mx-auto rounded border border-line bg-cream-200"
+          />
+          {data.video.caption && (
+            <figcaption class="meta mt-3 text-center text-pretty">{data.video.caption}</figcaption>
+          )}
+        </figure>
+      )}
+
       <!-- Cover image -->
       <img
         src={gallery[0]}
@@ -201,16 +221,17 @@ const jsonLdString = JSON.stringify(jsonLd);
         </ul>
       </section>
 
-      <!-- Image gallery -->
-      {gallery.length > 0 && (
+      <!-- Image gallery. gallery[0] is already the cover image above, so the
+           grid starts at the second one rather than repeating it. -->
+      {gallery.length > 1 && (
         <section class="mb-16">
           <h2 class="meta mb-4">// screens</h2>
           <div class="space-y-6">
-            {gallery.slice(0, 6).map((src, i) => (
+            {gallery.slice(1, 6).map((src, i) => (
               <figure class="border border-line rounded bg-cream-200 overflow-hidden">
                 <img
                   src={src}
-                  alt={`${data.title} — screen ${i + 1}`}
+                  alt={`${data.title} — screen ${i + 2}`}
                   class="w-full"
                   loading="lazy"
                 />
