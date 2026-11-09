@@ -26,7 +26,7 @@
 
 ---
 
-The source code for my personal portfolio. Nine engineering projects — multi-agent credit pipelines, CAD validation at ISGEC Heavy Engineering, real-time WebRTC, on-device computer vision, federated ML — rendered through a cream/orange editorial visual system I designed on top of Astro 5.
+The source code for my personal portfolio. Ten engineering projects — multi-agent credit pipelines, CAD validation at ISGEC Heavy Engineering, real-time WebRTC, on-device computer vision, federated ML, and a 90 kg line-following AGV — rendered through a cream/orange editorial visual system I designed on top of Astro 5.
 
 - **Stack** — Astro 5 (static) · MDX content · Tailwind 3.4 · Vercel adapter · `@vercel/analytics`
 - **Type** — Static site · MDX-backed content collections
@@ -38,13 +38,13 @@ The source code for my personal portfolio. Nine engineering projects — multi-a
 | Section | What it covers |
 |---|---|
 | **Hero** | `I'm RUSHABH` lockup with polaroid portrait slot, typewriter focus areas, four-stat metric strip |
-| **Featured cases** (×2) | `01 / 09` counter, category pill, hero metric footer, ISGEC partner link on ADV |
+| **Featured cases** (×2) | `01 / 10` counter, category pill, hero metric footer, ISGEC partner link on ADV |
 | **Experience** | Genxa Solutions internships with full per-intern bullet detail |
-| **Projects** (7) | Searchable + filterable grid, carousel-able product screenshots per card |
+| **Projects** (8) | Searchable + filterable grid, carousel-able product screenshots per card |
 | **Patents & Publications** | IEEE paper at I2ITCON 2026 + four filed patent applications |
 | **Right rail** | Education · Skills · Achievements · Testimonials · Contact |
 
-Plus three case-study routes (`/projects/<slug>/`) for the projects with `caseStudy: true` — each with a partner credit block (e.g. ISGEC), an `// outcome` metrics strip, and an `// screens` gallery.
+Plus four case-study routes (`/projects/<slug>/`) for the projects with `caseStudy: true` — each with a partner credit block (e.g. ISGEC), an `// outcome` metrics strip, and an `// screens` gallery.
 
 ## Design system
 
@@ -76,13 +76,13 @@ Skills, writing teasers, and testimonials are intentionally hard-coded inline in
 ```yaml
 title: "Project Title"          # Card headline
 year: 2026                       # Year shown in the footer
-category: Multi-Agent            # One of: Multi-Agent, Fintech, Edge-AI, Full-Stack, RAG
+category: Multi-Agent            # One of: Multi-Agent, Edge-AI, Robotics, Fintech, Full-Stack, RAG
 stack: [python, langchain]       # Used for filter matching
 githubUrl: "https://github.com/…" # null if private
 thumbnail: "/images/projects/cover-NN-slug.webp"
 images:                          # Case-study page gallery
   - "/images/projects/screens/slug.webp"
-featured: true                   # Top-2 get featured cards (01 / 09)
+featured: true                   # Top-2 get featured cards (01 / 10)
 caseStudy: true                  # Renders a /projects/<slug>/ route
 metrics:                         # Hero metric footer on the card
   - { label: "agents", value: "7" }
@@ -96,7 +96,7 @@ The full schema lives at `src/content/config.ts`.
 
 ## Generating / regenerating project covers
 
-The nine topographic covers ship pre-generated and committed under `public/images/projects/cover-<slug>.webp`. To regenerate one (after adjusting the prompt, for example):
+The ten topographic covers ship pre-generated and committed under `public/images/projects/cover-<slug>.webp`. To regenerate one (after adjusting the prompt, for example):
 
 ```bash
 mmx image generate \

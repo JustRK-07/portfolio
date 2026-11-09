@@ -57,17 +57,18 @@ const featuredMetric = (p: Project) =>
 const filterCategories: FilterCategory[] = [
   'All',
   'Multi-Agent',
-  'Fintech',
   'Edge-AI',
-  'Full-Stack',
   'Robotics',
+  'Fintech',
+  'Full-Stack',
 ];
 
 // --- Hero copy -------------------------------------------------------------
 const typewriterLines = [
   'multi-agent systems',
-  'retrieval-augmented products',
   'edge AI that works outside the cloud',
+  'autonomous robotics',
+  'retrieval-augmented products',
   'production WebRTC at sub-200ms',
 ];
 
@@ -108,6 +109,12 @@ const skills = [
     blurb:
       'Compressing models to fit on-device without losing the metric that matters. Quantization, distillation, and offline-first pipelines for sign-language avatars, biometric field ops, and federated forecasting.',
     tags: ['TFLite', 'ONNX Runtime', 'Core ML', 'Flower', 'PyTorch Mobile'],
+  },
+  {
+    title: 'Robotics, embedded control & edge autonomy',
+    blurb:
+      'Hardware-to-control design for a 90 kg line-following AGV: motor, driver and battery sizing against one mass budget, encoder-closed-loop wheel-speed sync across four motors, LiDAR safety zones, and the telemetry dashboard the operator drives it from.',
+    tags: ['STM32', 'Arduino', 'Motor control', 'LiDAR', 'Jetson Orin Nano', 'LiFePO4'],
   },
 ];
 
@@ -157,7 +164,7 @@ const testimonials = [
 
 <Base
   title="Rushabh Kalme — Software Engineer · Backend & Distributed Systems"
-  description="Backend & distributed-systems engineer; two Genxa Solutions internships (WebRTC SDK, voice platform); ISGEC Heavy Engineering industry engagement; IntelliCredit 7-agent credit pipeline. Codeforces Expert (1619), Cummins Merit Scholar '25, four patents filed, one IEEE paper accepted."
+  description="Backend & distributed-systems engineer; multi-agent systems, edge AI, and autonomous robotics; two Genxa Solutions internships (WebRTC SDK, voice platform); ISGEC Heavy Engineering industry engagement; IntelliCredit 7-agent credit pipeline. Codeforces Expert (1619), Cummins Merit Scholar '25, four patents filed, one IEEE paper accepted."
 >
   {/* ---- Mobile top bar (replaces the old Sidebar's mobile block) ---- */}
   <header class="lg:hidden sticky top-0 z-30 bg-cream-50/95 backdrop-blur border-b border-line">
@@ -271,7 +278,7 @@ const testimonials = [
               <p class="meta mb-2">// 03</p>
               <h2 class="text-[clamp(1.6rem,3vw,2.4rem)] font-semibold text-balance text-ink-900">Projects</h2>
               <p class="text-ink-700 mt-2 max-w-prose-thin text-pretty">
-                A working catalogue — multi-agent systems, fintech infra, edge-AI, and full-stack platforms. Filter by category.
+                A working catalogue — multi-agent systems, edge AI that works outside the cloud, autonomous robotics, fintech infra, and full-stack platforms. Filter by category.
               </p>
             </header>
             <ProjectFilter categories={filterCategories} />
