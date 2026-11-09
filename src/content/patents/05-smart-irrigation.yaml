@@ -1,6 +1,9 @@
-title: "Smart Irrigation Systems"
-venue: "Indian Patent Application"
-status: Filed
-year: 2025
-description: "IoT + ML-driven irrigation scheduling that combines weather, soil, and crop-stage signals."
+title: "An Irrigation System for Automated Plant Watering Based on Soil Moisture Conditions"
+venue: "South African Patent — No. 2025/10600 (Patents Act 57/1978), granted 26 Aug 2026"
+status: Published
+year: 2026
+links:
+  - label: "Certificate"
+    url: "/patents/za-2025-10600-irrigation-certificate.pdf"
+description: "Granted to Vishwakarma Institute of Technology with seven named inventors, Rushabh Kalme among them. Soil-moisture-triggered automated irrigation, IPC class A01G 23. Certificate on file with the Registrar of Patents, Pretoria."
 sortOrder: 5

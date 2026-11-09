@@ -1,0 +1,118 @@
+---
+title: "Innovelty AI — Automated Novelty Assessment for Patents & Research"
+year: 2026
+category: RAG
+stack: [python, streamlit, faiss, sentence-transformers, langchain, gemini]
+githubUrl: "https://github.com/JustRK-07/InNovelty-AI"
+thumbnail: "/images/projects/cover-11-innovelty-ai.webp"
+images:
+  - "/images/projects/screens/innovelty-ai.webp"
+  - "/images/projects/screens/innovelty-ai-2.webp"
+  - "/images/projects/screens/innovelty-ai-3.webp"
+featured: true
+caseStudy: true
+role: "Co-author & implementer · IEEE I2ITCON 2026"
+summary: "Published at IEEE I2ITCON 2026. An end-to-end pipeline that scores a candidate invention against existing patents and research, and attributes the novelty claim by claim instead of returning a similarity number."
+problem: "Finding out whether an idea is actually new means searching IEEE Xplore, Google Scholar, Google Patents, arXiv and DOAJ, then reading past the abstracts to find the handful of papers that matter. For a student or an IP lawyer that is a full-time job, and most people do not know how to run prior-art analysis properly — the result is either false novelty or a filing nobody trusts."
+approach: "Collect prior art from five sources into one corpus, embed it with a MiniLM sentence encoder, and index it in FAISS so inner product is cosine similarity. The candidate idea is embedded the same way and matched against that index. Novelty falls out of the strongest match, confidence out of how tightly the hits agree, and a grounded LLM pass attributes the score back to specific claims and prior art."
+results:
+  - "Prior art gathered from five sources — arXiv, IEEE Xplore, DOAJ, Google Patents and Google Scholar — into one vector index"
+  - "384-dim MiniLM embeddings in a FAISS flat inner-product index, with a recency boost so 2020+ work is not buried under older papers"
+  - "Explainable novelty score: the strongest match sets the ceiling, and every additional hit above 0.7 similarity is penalised"
+  - "Confidence reported separately from novelty, so a 90% score on a thin corpus never reads as a 90% score on a full one"
+  - "Published at IEEE I2ITCON 2026 with five co-authors from VIT Pune — DOI 10.1109/I2ITCON69735.2026.11747923"
+tech: [Python, Streamlit, FAISS, sentence-transformers, LangChain, Google Gemini 2.5 Flash, arXiv API, IEEE Xplore API, DOAJ API, SerpAPI, reportlab]
+status: Public
+sortOrder: 11
+metrics:
+  - { label: "prior-art sources", value: "5" }
+  - { label: "embedding dim", value: "384" }
+  - { label: "patent threshold", value: "70%" }
+  - { label: "top-k retrieved", value: "50" }
+---
+
+## The problem
+
+The paper-and-patent filing boom turned novelty checking into a full-time job. You search
+IEEE Xplore, Google Scholar and Google Patents, you scroll through millions of papers a
+year, and you identify the relevant ones by hand — a process that is tedious, easy to get
+wrong, and one most people are not trained to do. The question a student actually has is
+simple: *is this project idea original?* Without a clear guide, that is a hard
+determination to make.
+
+The academic and industry answer is prior-art analysis, and the tooling for it was
+scattered. The system brings the sources together and does the reading.
+
+## The pipeline
+
+**1 · Collect.** Five sources, each behind its own API — arXiv (Atom), IEEE Xplore
+(REST), DOAJ (API v2), Google Patents and Google Scholar (SearchAPI / SerpAPI) — are
+queried for the idea's key phrases and normalised into one corpus dataframe that keeps
+the papers and the patents distinguishable.
+
+**2 · Embed.** Every record is encoded with `all-MiniLM-L6-v2`, a 384-dimensional sentence
+embedding, L2-normalised so that cosine similarity is a plain dot product.
+
+**3 · Index.** The embeddings go into a FAISS `IndexFlatIP` flat inner-product index,
+written once to disk and reused across searches. Because the vectors are normalised, the
+inner product *is* cosine similarity — no separate normalisation step at query time. The
+admin dashboard can rebuild the index from the current cache without a full re-scrape.
+
+**4 · Retrieve.** The candidate idea is embedded with the same model and matched against
+the index, pulling the top 50 neighbours. Retrieved hits get a **recency boost**: a paper
+from 2020 onwards gains up to +0.05 on its score, so recent work is not buried under a
+decade of older papers that happen to use similar vocabulary.
+
+**5 · Score.** Novelty and confidence are computed separately, because they answer
+different questions:
+
+```
+novelty   = (1 − max_similarity) × 100 − 3 × (hits with similarity > 0.7)
+confidence = 50 + min(50, hits/50 × 30) + (1 / dispersion) × 10
+```
+
+The strongest match sets the ceiling on novelty, and every additional strong hit is
+penalised, so an idea that collides with five papers is not scored like one that collides
+with one. Confidence instead grows with how much evidence there is and how tightly that
+evidence agrees — a 90% novelty score on a thin corpus never reads like a 90% score on a
+full one. At **70% or above** the system says a patent can be filed; below that it says
+to write it up as research instead.
+
+**6 · Attribute.** A grounded Gemini pass (via LangChain) reads the retrieved patents and
+papers alongside the idea and explains the score: which part of the idea is genuinely
+new, which claim collides with which prior art, and what would have to change.
+
+## What it produces
+
+A novelty score with its confidence band, the similar patents and the similar papers
+behind both, an AI chat grounded in the same retrieved corpus, and a PDF or CSV export of
+the whole analysis. Search history is kept locally so a previous idea can be revisited.
+There is no separate corpus for papers and for patents — the index spans both, which is
+the point: a novelty question that only searches papers answers a different question than
+the one being asked.
+
+## The app
+
+![The novelty checker — pipeline steps and idea input](/images/projects/screens/innovelty-ai.webp)
+
+Six steps from an idea to a filing decision: search five sources, score it, show what it
+collides with, chat about it, and export it.
+
+![Idea input form filled with a sample description](/images/projects/screens/innovelty-ai-2.webp)
+
+The idea is entered in plain language — title, domain, the problem, the approach and the
+technical detail — and key phrases are extracted from it to drive the search.
+
+![Admin dashboard — index rebuild from cache](/images/projects/screens/innovelty-ai-3.webp)
+
+The admin view manages the corpus and rebuilds the FAISS index from the cached data
+without a full re-scrape.
+
+## Publication & code
+
+Published at the 2nd IEEE International Conference on Information, Implementation and
+Innovation in Technology (I2ITCON 2026), Pune.
+
+- [IEEE Xplore — document 11747923](https://ieeexplore.ieee.org/document/11747923)
+- [Google Scholar — "Innovelty AI"](https://scholar.google.com/scholar?q=%22Innovelty+AI%22)
+- [Code — github.com/JustRK-07/InNovelty-AI](https://github.com/JustRK-07/InNovelty-AI)

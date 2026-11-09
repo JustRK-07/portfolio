@@ -41,7 +41,7 @@ The source code for my personal portfolio. Ten engineering projects — multi-ag
 | **Featured cases** (×2) | `01 / 10` counter, category pill, hero metric footer, ISGEC partner link on ADV |
 | **Experience** | Genxa Solutions internships with full per-intern bullet detail |
 | **Projects** (8) | Searchable + filterable grid, carousel-able product screenshots per card |
-| **Patents & Publications** | IEEE paper at I2ITCON 2026 + four filed patent applications |
+| **Patents & Publications** | IEEE paper published at I2ITCON 2026 + one granted South African patent + three filed applications |
 | **Right rail** | Education · Skills · Achievements · Testimonials · Contact |
 
 Plus four case-study routes (`/projects/<slug>/`) for the projects with `caseStudy: true` — each with a partner credit block (e.g. ISGEC), an `// outcome` metrics strip, and an `// screens` gallery.
@@ -76,7 +76,7 @@ Skills, writing teasers, and testimonials are intentionally hard-coded inline in
 ```yaml
 title: "Project Title"          # Card headline
 year: 2026                       # Year shown in the footer
-category: Multi-Agent            # One of: Multi-Agent, Edge-AI, Robotics, Fintech, Full-Stack, RAG
+category: Multi-Agent            # One of: Multi-Agent, Edge-AI, RAG, Robotics, Fintech, Full-Stack
 stack: [python, langchain]       # Used for filter matching
 githubUrl: "https://github.com/…" # null if private
 thumbnail: "/images/projects/cover-NN-slug.webp"

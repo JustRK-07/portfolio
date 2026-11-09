@@ -58,6 +58,7 @@ const filterCategories: FilterCategory[] = [
   'All',
   'Multi-Agent',
   'Edge-AI',
+  'RAG',
   'Robotics',
   'Fintech',
   'Full-Stack',
@@ -164,7 +165,7 @@ const testimonials = [
 
 <Base
   title="Rushabh Kalme — Software Engineer · Backend & Distributed Systems"
-  description="Backend & distributed-systems engineer; multi-agent systems, edge AI, and autonomous robotics; two Genxa Solutions internships (WebRTC SDK, voice platform); ISGEC Heavy Engineering industry engagement; IntelliCredit 7-agent credit pipeline. Codeforces Expert (1619), Cummins Merit Scholar '25, four patents filed, one IEEE paper accepted."
+  description="Backend & distributed-systems engineer; multi-agent systems, edge AI, and autonomous robotics; two Genxa Solutions internships (WebRTC SDK, voice platform); ISGEC Heavy Engineering industry engagement; IntelliCredit 7-agent credit pipeline. Codeforces Expert (1619), Cummins Merit Scholar '25, one IEEE paper published (I2ITCON 2026) and one granted patent."
 >
   {/* ---- Mobile top bar (replaces the old Sidebar's mobile block) ---- */}
   <header class="lg:hidden sticky top-0 z-30 bg-cream-50/95 backdrop-blur border-b border-line">
@@ -213,7 +214,7 @@ const testimonials = [
         name={sidebar.name}
         firstName={sidebar.firstName}
         eyebrow="available for new roles · 2026"
-        pitch="Backend &amp; distributed-systems engineer. Two internships at Genxa Solutions shipped a sub-200ms p50 WebRTC SDK and a voice platform running 2.3K concurrent calls/day at 99.9% uptime; co-architected the CAD validation engine for ISGEC Heavy Engineering on real General Arrangement drawings. On my own time, a 7-agent LangGraph pipeline compresses 3–6 weeks of manual credit appraisal into under 4 minutes. Codeforces Expert (1619, top 10% globally), Cummins Merit Scholar '25, four patents filed since 2025, one IEEE paper accepted."
+        pitch="Backend &amp; distributed-systems engineer. Two internships at Genxa Solutions shipped a sub-200ms p50 WebRTC SDK and a voice platform running 2.3K concurrent calls/day at 99.9% uptime; co-architected the CAD validation engine for ISGEC Heavy Engineering on real General Arrangement drawings. On my own time, a 7-agent LangGraph pipeline compresses 3–6 weeks of manual credit appraisal into under 4 minutes. Codeforces Expert (1619, top 10% globally), Cummins Merit Scholar '25, one IEEE paper published at I2ITCON 2026, and a granted South African patent."
         typewriterLines={typewriterLines}
         metrics={heroMetrics}
       />
@@ -278,7 +279,7 @@ const testimonials = [
               <p class="meta mb-2">// 03</p>
               <h2 class="text-[clamp(1.6rem,3vw,2.4rem)] font-semibold text-balance text-ink-900">Projects</h2>
               <p class="text-ink-700 mt-2 max-w-prose-thin text-pretty">
-                A working catalogue — multi-agent systems, edge AI that works outside the cloud, autonomous robotics, fintech infra, and full-stack platforms. Filter by category.
+                A working catalogue — multi-agent systems, edge AI that works outside the cloud, retrieval-augmented products, autonomous robotics, fintech infra, and full-stack platforms. Filter by category.
               </p>
             </header>
             <ProjectFilter categories={filterCategories} />
@@ -350,7 +351,7 @@ const testimonials = [
           <p class="meta mb-2">// 04</p>
           <h2 class="text-[clamp(1.6rem,3vw,2.4rem)] font-semibold text-balance text-ink-900">Patents & Publications</h2>
           <p class="text-ink-700 mt-2 max-w-prose-thin text-pretty">
-            One IEEE-accepted paper and four patent applications filed between 2025 and 2026.
+            One IEEE-published paper, one granted patent and three patent applications filed between 2025 and 2026.
           </p>
         </header>
         <div>

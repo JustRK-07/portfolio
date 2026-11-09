@@ -66,7 +66,14 @@ const patents = defineCollection({
     venue: z.string(),
     status: z.enum(['Filed', 'Accepted', 'Published']),
     year: z.number().int(),
-    link: z.string().url().optional(),
+    links: z
+      .array(
+        z.object({
+          label: z.string(),
+          url: z.string(),
+        })
+      )
+      .optional(),
     description: z.string(),
     sortOrder: z.number().int().optional(),
   }),

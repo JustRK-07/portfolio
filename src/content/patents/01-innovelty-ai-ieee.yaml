@@ -1,6 +1,13 @@
 title: "Innovelty AI: An AI-Driven System for Automated Novelty Assessment and Patentability Analysis"
-venue: "IEEE I2ITCON 2026 (to appear in IEEE Xplore)"
-status: Accepted
+venue: "IEEE I2ITCON 2026 — 2nd Int. Conf. on Information, Implementation and Innovation in Technology"
+status: Published
 year: 2026
-description: "End-to-end AI pipeline that scores a candidate invention against existing patents and research, with explainable novelty attribution."
+links:
+  - label: "IEEE Xplore"
+    url: "https://ieeexplore.ieee.org/document/11747923"
+  - label: "Google Scholar"
+    url: "https://scholar.google.com/scholar?q=%22Innovelty+AI%22"
+  - label: "Code"
+    url: "https://github.com/JustRK-07/InNovelty-AI"
+description: "End-to-end AI pipeline that scores a candidate invention against existing patents and research, with explainable novelty attribution. Published with five co-authors from VIT Pune — DOI 10.1109/I2ITCON69735.2026.11747923."
 sortOrder: 1
