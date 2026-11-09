@@ -1,0 +1,15 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "redirects": [
+    {
+      "source": "/projects/10-bekeart-agv",
+      "destination": "/projects/10-bekaert-agv",
+      "permanent": true
+    },
+    {
+      "source": "/projects/10-bekeart-agv/:path*",
+      "destination": "/projects/10-bekaert-agv",
+      "permanent": true
+    }
+  ]
+}
