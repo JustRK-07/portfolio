@@ -5,7 +5,7 @@ const projects = defineCollection({
   schema: z.object({
     title: z.string(),
     year: z.number().int(),
-    category: z.enum(['Multi-Agent', 'Fintech', 'Edge-AI', 'Full-Stack', 'RAG']),
+    category: z.enum(['Multi-Agent', 'Fintech', 'Edge-AI', 'Full-Stack', 'RAG', 'Robotics']),
     stack: z.array(z.string()).min(1),
     githubUrl: z.string().url().nullable(),
     demoUrl: z.string().url().optional(),

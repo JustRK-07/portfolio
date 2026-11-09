@@ -26,3 +26,6 @@ Thumbs.db
 .vscode/
 .idea/
 *.swp
+
+# AGV source footage — the copies that ship live in public/videos/
+bekeart/*.mp4

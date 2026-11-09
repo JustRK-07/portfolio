@@ -1,0 +1,188 @@
+---
+title: "Bekeart AGV — Chassis, Drive & Telemetry Platform"
+year: 2026
+category: Robotics
+stack: [python, flask, websockets, opencv, arduino, stm32, jetson]
+githubUrl: "https://github.com/JustRK-07/arduino"
+thumbnail: "/images/projects/cover-10-bekeart-agv.webp"
+images:
+  - "/images/projects/screens/bekeart-agv.webp"
+  - "/images/projects/screens/bekeart-agv-2.webp"
+  - "/images/projects/screens/bekeart-agv-3.webp"
+  - "/images/projects/screens/bekeart-agv-4.webp"
+  - "/images/projects/screens/bekeart-agv-5.webp"
+  - "/images/projects/screens/bekeart-agv-6.webp"
+featured: true
+caseStudy: true
+role: "Hardware & controls engineering"
+summary: "Hardware and electrical design for a 90 kg four-wheel AGV: motor, driver and battery sizing, encoder-closed-loop wheel-speed sync on STM32, and the live operator dashboard that runs the platform."
+problem: "A line-following AGV has to hold a straight line on a 152 mm wheelbase while carrying its own compute and power. Choosing the drive chain by catalogue number is not enough — motor torque, driver headroom, pack voltage and thermal margin all have to close against the same mass budget, and the operator needs to see encoder, LiDAR and camera state while the machine is moving."
+approach: "Sized the whole chain from a 90 kg target: 97–98 kg design mass with a 25 kg chassis, four 21 Nm motors on independent drivers, and a 2S4P LiFePO4 pack for 6–8 hours of duty. Encoder feedback closes the loop in firmware, so all four wheels are driven to a commanded speed rather than a raw PWM value, which is what makes the straight line straight."
+results:
+  - "97–98 kg design mass closed against a 90 kg target, 25 kg of it chassis"
+  - "4 × 21 Nm drivetrain with independent drivers and per-motor encoder feedback"
+  - "3.07 kWh / 120 Ah LiFePO4 pack sized for a 6–8 h shift (≈7 h at 350 W)"
+  - "STM32 closed-loop wheel-speed sync across four motors — the straight line is closed-loop, not luck"
+  - "Operator dashboard: chassis telemetry, LiDAR safety zones, motor bench test and session recording"
+tech: [Python, Flask, WebSockets, OpenCV, Arduino ATmega328P, STM32, NVIDIA Jetson Orin Nano 8 GB, LiFePO4 2S4P, Playwright]
+status: Public
+sortOrder: 10
+metrics:
+  - { label: "design mass", value: "97–98 kg" }
+  - { label: "pack energy", value: "3.07 kWh" }
+  - { label: "runtime @ 350 W", value: "~7 h" }
+  - { label: "drive torque", value: "4 × 21 Nm" }
+---
+
+## Chassis and mass budget
+
+Everything downstream is sized against the mass it has to carry, so the budget came first.
+
+| Parameter | Value |
+| --- | --- |
+| Expected total AGV weight | 90 kg |
+| Additional design allowance | 7–8 kg |
+| Preliminary design mass | 97–98 kg |
+| Chassis weight | 25 kg |
+| Wheel diameter | 152 mm |
+
+The 152 mm wheel matters more than it looks: it sets both the linear speed per motor RPM and the
+encoder resolution needed to hold a straight line. It also fixes the turning geometry, so the
+chassis is drawn around the wheelbase rather than the other way round.
+
+## Drive chain
+
+Four motors, each on its own driver, so a fault or a trim on one side can never be masked by
+the other three.
+
+| Parameter | Value |
+| --- | --- |
+| Motor | Orange PG56/63ZY125-2440-65K |
+| Supply | 24 V DC |
+| Rated speed | 49 RPM |
+| Rated torque | 21 Nm per motor |
+| Rated current | 9 A per motor |
+| Total rated current | 36 A for four motors |
+
+Drivers are 4 × SmartElex 30S — 30 A continuous, 85 A peak, 28 V maximum operating voltage.
+
+> **Open constraint.** The pack reaches 29.2 V fully charged, which is above the driver's
+> 28 V ceiling, so the SmartElex 30S cannot sit directly across the battery bank. The choice
+> is either a driver rated for the higher voltage or an engineered regulated motor supply;
+> either way it has to be closed before the pack is built.
+
+## Power: 2S4P LiFePO4
+
+Eight Pro-Range LiFePO4 cells at 12.8 V / 30 Ah, wired 2S4P — two in series per string, four
+strings in parallel.
+
+| Parameter | Result |
+| --- | --- |
+| Nominal voltage | 25.6 V |
+| Capacity | 120 Ah |
+| Total energy | 3,072 Wh |
+| Fully charged voltage | 29.2 V |
+| Estimated battery weight | 25.6 kg |
+
+Two things have to be confirmed with the manufacturer before this is built as drawn: that the
+individual BMS units tolerate a 2S4P configuration, and that the cells are matched well enough
+to share current across parallel strings. A purpose-built 25.6 V / 120 Ah pack is the fallback
+if the individual units will not.
+
+### Runtime
+
+Target was 6–8 hours. At 80 % usable energy:
+
+| Average power consumption | Backup |
+| --- | --- |
+| 300 W | 8.2 hours |
+| 350 W | 7 hours |
+| 400 W | 6.1 hours |
+| 500 W | 4.9 hours |
+
+Real runtime depends on motor load, how much the rover moves, stops and turns, and how hard
+the Jetson is working — the table is the floor, not a promise.
+
+## Compute
+
+The NVIDIA Jetson Orin Nano 8 GB handles AI and camera processing, fed from a DC-DC buck
+converter that takes the main pack down to a regulated 12 V at 5 A (as tested). No separate
+battery is needed, which keeps the mass budget intact.
+
+## Encoder feedback
+
+All four motors take incremental A/B magnetic encoders. The STM32 uses them to measure real
+motor speed, synchronise all four motors, and correct the difference between wheel speeds.
+That last part is the whole point: with raw PWM the left and right wheels drift apart within
+seconds, and the rover curves off the line. With the loop closed, the commanded speed is a
+speed and not a duty cycle.
+
+## Telemetry dashboard
+
+The operator surface for the platform — chassis monitor on top, then the working tabs.
+Screens below are the real dashboard running against the platform.
+
+![Chassis monitor — per-motor driver, PWM, direction and encoder counts](/images/projects/screens/bekeart-agv.webp)
+
+The chassis monitor is the always-on view: target against measured wheel speed, applied PWM,
+and live encoder counts for all four motors.
+
+![Drive tab — annotated camera feed with line tracking](/images/projects/screens/bekeart-agv-2.webp)
+
+The drive view puts the annotated camera feed under the monitor, with the line offset, angle,
+lookahead and curvature the decision loop is actually working from.
+
+![Motor test — each driver on its own](/images/projects/screens/bekeart-agv-4.webp)
+
+The motor test tab drives one side at a time, in encoder-PID or raw-PWM mode, with a 0 → 100 → 0
+ramp. It is the bench check that a driver, a motor and an encoder agree before the robot is
+allowed near a line.
+
+![LiDAR obstacle safety — stop, slow and clear zones](/images/projects/screens/bekeart-agv-5.webp)
+
+LiDAR safety runs three zones: stop, slow and clear. A sensor that goes stale or drops off
+stops the rover rather than letting it drive blind.
+
+![Recording — frames plus a detection log](/images/projects/screens/bekeart-agv-6.webp)
+
+Recording captures the camera frames and a log row per frame, so a fault can be traced back to
+the frame that caused it.
+
+## On the rover
+
+<figure class="my-6">
+  <video
+    controls
+    muted
+    loop
+    playsinline
+    preload="metadata"
+    poster="/images/projects/screens/bekeart-agv.webp"
+    class="w-full rounded border border-line bg-cream-200"
+  >
+    <source src="/videos/bekeart-agv-01.mp4" type="video/mp4" />
+    Your browser does not support the video tag.
+  </video>
+  <figcaption class="meta mt-3">AGV on the bench — drive train, encoder feedback and the operator dashboard.</figcaption>
+</figure>
+
+<figure class="my-6">
+  <video
+    controls
+    muted
+    loop
+    playsinline
+    preload="metadata"
+    poster="/images/projects/screens/bekeart-agv-2.webp"
+    class="w-full rounded border border-line bg-cream-200"
+  >
+    <source src="/videos/bekeart-agv-02.mp4" type="video/mp4" />
+    Your browser does not support the video tag.
+  </video>
+  <figcaption class="meta mt-3">Line-following run under live telemetry.</figcaption>
+</figure>
+
+## Status
+
+Hardware sizing is complete; the driver-voltage constraint above is still open and is the
+next decision before the pack is ordered.
