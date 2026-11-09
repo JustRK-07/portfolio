@@ -17,10 +17,4 @@ export default defineConfig({
   build: {
     inlineStylesheets: 'auto',
   },
-  // The AGV project slug was corrected from "bekeart" to "bekaert" — keep the
-  // old URL working rather than 404 it. Astro emits an exact-match Vercel
-  // route here; vercel.json covers the trailing-slash form too.
-  redirects: {
-    '/projects/10-bekeart-agv': '/projects/10-bekaert-agv',
-  },
 });

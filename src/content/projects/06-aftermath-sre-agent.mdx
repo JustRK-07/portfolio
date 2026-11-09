@@ -10,6 +10,7 @@ images:
   - "/images/projects/screens/aftermath-2.webp"
   - "/images/projects/screens/aftermath.webp"
 featured: true
+caseStudy: true
 summary: "An SRE agent that remembers every past outage, proposes evidence-cited mitigations with a real confidence score, refuses fixes that have backfired, and decays weak fixes. Built on Hindsight memory + OpenClaw SRE agent."
 problem: "When a service breaks at 3 a.m., the on-call engineer is alone with a wall of alerts. The lesson from the last time this happened lives in a Slack thread nobody can find."
 approach: "A DARC loop (Diagnose-Act-Record-Consolidate) wired to a memory bank. Every successful fix strengthens the memory; every failed fix is logged and used to refuse the same fix in the future. Decay scoring fades fixes that stop working."

@@ -44,7 +44,7 @@ The source code for my personal portfolio. Eleven engineering projects — multi
 | **Patents & Publications** | IEEE paper published at I2ITCON 2026 + one granted South African patent + three filed applications |
 | **Right rail** | Education · Skills · Achievements · Testimonials · Contact |
 
-Plus five case-study routes (`/projects/<slug>/`) for the projects with `caseStudy: true` — each with a partner credit block (e.g. ISGEC or Bekaert), an `// outcome` metrics strip, and an `// screens` gallery.
+Plus eleven case-study routes (`/projects/<slug>/`) — every project gets a detail page, and each card in the grid links to it. Each carries a partner credit block (e.g. ISGEC or Bekaert), an `// outcome` metrics strip, and an `// screens` gallery.
 
 ## Design system
 

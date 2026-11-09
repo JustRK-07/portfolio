@@ -10,6 +10,7 @@ images:
   - "/images/projects/screens/rail-yard-3.webp"
   - "/images/projects/screens/rail-yard-2.webp"
 featured: true
+caseStudy: true
 summary: "Full-stack rail-yard scheduling: Java 21/Spring Boot 4.0 REST API, Angular 21 dispatcher shell, and a normalized PostgreSQL 17 schema. Conflict-free reservations enforced at the database layer via a partial GiST exclusion constraint."
 problem: "Dispatchers need to assign trains to yard tracks without creating schedule conflicts, and the conflict check has to be atomic under concurrent writes."
 approach: "Normalised PostgreSQL schema with three Flyway migrations, a partial GiST exclusion constraint enforcing non-overlapping track reservations for PLANNED and ACTIVE rows, an RFC-style error envelope with correlation IDs, and a multi-stage Docker Compose deployment behind a 3-job CI pipeline."

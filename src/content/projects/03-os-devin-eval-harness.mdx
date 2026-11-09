@@ -10,6 +10,7 @@ images:
   - "/images/projects/screens/os-devin-3.webp"
   - "/images/projects/screens/os-devin-2.webp"
 featured: true
+caseStudy: true
 summary: "A measurement instrument for autonomous coding agents. Four-agent LangGraph system (Planner, Code, Reviewer, Debugger) benchmarked across 18 hand-curated tasks, 4 agent configurations, and 3 LLM backends — with Docker-managed isolation and AST-based side-effect guards."
 problem: "Most agentic-coding demos show a single run. They don't isolate the marginal contribution of each architectural component, so 'it worked once' gets mistaken for 'it works'."
 approach: "Treat the agent stack as a configurable benchmark. Toggle a self-healing retry loop, an AST pre-edit guard, and a per-task Docker sandbox; measure pass-rate delta on a fixed task suite with oracle-based scoring."
