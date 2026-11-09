@@ -35,6 +35,8 @@ const { categories } = Astro.props;
         card.hidden = !show;
         if (show) visible++;
       });
+      const empty = document.querySelector<HTMLElement>('[data-empty-state]');
+      if (empty) empty.classList.toggle('hidden', visible > 0);
       buttons.forEach((b) => {
         b.setAttribute('aria-pressed', String(b.dataset.filter === cat));
         if (b.dataset.filter === cat) {

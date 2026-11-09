@@ -52,6 +52,14 @@
     box-sizing: border-box;
   }
 
+  /* The UA rule for [hidden] is display:none, but any Tailwind display
+     utility (.flex, .grid) on the same element outranks it — so setting
+     el.hidden = true silently does nothing. The project filter relies on
+     it, so make it win. */
+  [hidden] {
+    display: none !important;
+  }
+
   html {
     background: var(--cream-100);
     color: var(--ink-900);
