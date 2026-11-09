@@ -17,4 +17,9 @@ export default defineConfig({
   build: {
     inlineStylesheets: 'auto',
   },
+  // The AGV project slug was corrected from "bekeart" to "bekaert" — keep the
+  // old URL working rather than 404 it.
+  redirects: {
+    '/projects/10-bekeart-agv': '/projects/10-bekaert-agv',
+  },
 });

@@ -26,7 +26,7 @@
 
 ---
 
-The source code for my personal portfolio. Ten engineering projects — multi-agent credit pipelines, CAD validation at ISGEC Heavy Engineering, real-time WebRTC, on-device computer vision, federated ML, and a 90 kg line-following AGV — rendered through a cream/orange editorial visual system I designed on top of Astro 5.
+The source code for my personal portfolio. Eleven engineering projects — multi-agent credit pipelines, CAD validation at ISGEC Heavy Engineering, an autonomous AGV platform built with Bekaert, real-time WebRTC, on-device computer vision, federated ML — rendered through a cream/orange editorial visual system I designed on top of Astro 5.
 
 - **Stack** — Astro 5 (static) · MDX content · Tailwind 3.4 · Vercel adapter · `@vercel/analytics`
 - **Type** — Static site · MDX-backed content collections
@@ -38,19 +38,19 @@ The source code for my personal portfolio. Ten engineering projects — multi-ag
 | Section | What it covers |
 |---|---|
 | **Hero** | `I'm RUSHABH` lockup with polaroid portrait slot, typewriter focus areas, four-stat metric strip |
-| **Featured cases** (×2) | `01 / 10` counter, category pill, hero metric footer, ISGEC partner link on ADV |
+| **Featured cases** (×3) | `01 / 11` counter, category pill, hero metric footer, partner link on ADV and the AGV |
 | **Experience** | Genxa Solutions internships with full per-intern bullet detail |
-| **Projects** (8) | Searchable + filterable grid, carousel-able product screenshots per card |
+| **Projects** (11) | Searchable + filterable grid, carousel-able product screenshots per card; the featured cases stay in it too |
 | **Patents & Publications** | IEEE paper published at I2ITCON 2026 + one granted South African patent + three filed applications |
 | **Right rail** | Education · Skills · Achievements · Testimonials · Contact |
 
-Plus four case-study routes (`/projects/<slug>/`) for the projects with `caseStudy: true` — each with a partner credit block (e.g. ISGEC), an `// outcome` metrics strip, and an `// screens` gallery.
+Plus five case-study routes (`/projects/<slug>/`) for the projects with `caseStudy: true` — each with a partner credit block (e.g. ISGEC or Bekaert), an `// outcome` metrics strip, and an `// screens` gallery.
 
 ## Design system
 
 Cream paper surface (`#F5EFE6`) with vibrant orange-red accents (`#E55934` for fills, `#C8451F` for AA-safe text). Editorial typography pairing: **Fraunces** (variable 400/600/800) for the giant `RUSHABH` wordmark and section headings, **Instrument Serif italic** for accents like `I'm` and testimonial quotes, **Inter** for body, **JetBrains Mono** for code and eyebrows.
 
-Every project card has a **topographic landscape cover** generated through the `mmx-cli` MiniMax image-01 skill. All UI screenshots live under `public/images/projects/screens/<slug>-N.webp` and are used on the case-study pages.
+Most project cards have a **topographic landscape cover** generated through the `mmx-cli` MiniMax image-01 skill; the Bekeart AGV and Innovelty AI cards use real UI screenshots instead. All UI screenshots live under `public/images/projects/screens/<slug>-N.webp` and are used on the case-study pages.
 
 The full token system is defined in [`src/styles/globals.css`](./src/styles/globals.css) as CSS custom properties and surfaced through [`tailwind.config.mjs`](./tailwind.config.mjs). `darkMode` is locked to the cream palette in v1 — the prefers-color-scheme media query is intentionally commented out.
 
@@ -82,7 +82,7 @@ githubUrl: "https://github.com/…" # null if private
 thumbnail: "/images/projects/cover-NN-slug.webp"
 images:                          # Case-study page gallery
   - "/images/projects/screens/slug.webp"
-featured: true                   # Top-2 get featured cards (01 / 10)
+featured: true                   # Top-3 get featured cards (01 / 11)
 caseStudy: true                  # Renders a /projects/<slug>/ route
 metrics:                         # Hero metric footer on the card
   - { label: "agents", value: "7" }
@@ -96,7 +96,7 @@ The full schema lives at `src/content/config.ts`.
 
 ## Generating / regenerating project covers
 
-The ten topographic covers ship pre-generated and committed under `public/images/projects/cover-<slug>.webp`. To regenerate one (after adjusting the prompt, for example):
+The covers ship pre-generated and committed under `public/images/projects/cover-<slug>.webp`. To regenerate one (after adjusting the prompt, for example):
 
 ```bash
 mmx image generate \

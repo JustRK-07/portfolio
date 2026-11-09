@@ -1,20 +1,27 @@
 ---
-title: "Bekeart AGV — Chassis, Drive & Telemetry Platform"
+title: "Bekaert AGV — Chassis, Drive & Telemetry Platform"
 year: 2026
 category: Robotics
 stack: [python, flask, websockets, opencv, arduino, stm32, jetson]
 githubUrl: "https://github.com/JustRK-07/arduino"
-thumbnail: "/images/projects/cover-10-bekeart-agv.webp"
+thumbnail: "/images/projects/cover-10-bekaert-agv.webp"
 images:
-  - "/images/projects/screens/bekeart-agv.webp"
-  - "/images/projects/screens/bekeart-agv-2.webp"
-  - "/images/projects/screens/bekeart-agv-3.webp"
-  - "/images/projects/screens/bekeart-agv-4.webp"
-  - "/images/projects/screens/bekeart-agv-5.webp"
-  - "/images/projects/screens/bekeart-agv-6.webp"
+  - "/images/projects/screens/bekaert-agv.webp"
+  - "/images/projects/screens/bekaert-agv-2.webp"
+  - "/images/projects/screens/bekaert-agv-3.webp"
+  - "/images/projects/screens/bekaert-agv-4.webp"
+  - "/images/projects/screens/bekaert-agv-5.webp"
+  - "/images/projects/screens/bekaert-agv-6.webp"
 featured: true
 caseStudy: true
-role: "Hardware & controls engineering"
+role: "Software · computer vision · AI/ML · platform development"
+partner:
+  name: "Bekaert"
+  location: "Zwevegem, Belgium"
+  founded: 1880
+  tagline: "steel wire transformation · coatings · tyre reinforcement"
+  url: "https://www.bekaert.com/en/home"
+  description: "Founded in 1880 by Leo Leander Bekaert in Zwevegem, Belgium, Bekaert is a technology-driven steel wire transformation and coating business, with competencies in metal-forming and surface coating. It is a global supplier of tyre reinforcement steel cord, wire rope and advanced wire solutions, and is listed on Euronext Brussels. The AGV platform below was built as an industry engagement with Bekaert."
 summary: "Hardware and electrical design for a 90 kg four-wheel AGV: motor, driver and battery sizing, encoder-closed-loop wheel-speed sync on STM32, and the live operator dashboard that runs the platform."
 problem: "A line-following AGV has to hold a straight line on a 152 mm wheelbase while carrying its own compute and power. Choosing the drive chain by catalogue number is not enough — motor torque, driver headroom, pack voltage and thermal margin all have to close against the same mass budget, and the operator needs to see encoder, LiDAR and camera state while the machine is moving."
 approach: "Sized the whole chain from a 90 kg target: 97–98 kg design mass with a 25 kg chassis, four 21 Nm motors on independent drivers, and a 2S4P LiFePO4 pack for 6–8 hours of duty. Encoder feedback closes the loop in firmware, so all four wheels are driven to a commanded speed rather than a raw PWM value, which is what makes the straight line straight."
@@ -26,13 +33,23 @@ results:
   - "Operator dashboard: chassis telemetry, LiDAR safety zones, motor bench test and session recording"
 tech: [Python, Flask, WebSockets, OpenCV, Arduino ATmega328P, STM32, NVIDIA Jetson Orin Nano 8 GB, LiFePO4 2S4P, Playwright]
 status: Public
-sortOrder: 10
+sortOrder: 1
 metrics:
   - { label: "design mass", value: "97–98 kg" }
   - { label: "pack energy", value: "3.07 kWh" }
   - { label: "runtime @ 350 W", value: "~7 h" }
   - { label: "drive torque", value: "4 × 21 Nm" }
 ---
+
+## The engagement
+
+Built as an industry engagement with **Bekaert** — the Belgian steel wire transformation and
+coatings group, founded in 1880 in Zwevegem. The brief was a line-following AGV that a
+floor operator can run without a specialist standing over it: it has to hold a straight line
+on its own, know when something is in front of it, and run long enough to be useful between
+charges.
+
+Everything below is the hardware and controls design for that machine.
 
 ## Chassis and mass budget
 
@@ -122,28 +139,28 @@ speed and not a duty cycle.
 The operator surface for the platform — chassis monitor on top, then the working tabs.
 Screens below are the real dashboard running against the platform.
 
-![Chassis monitor — per-motor driver, PWM, direction and encoder counts](/images/projects/screens/bekeart-agv.webp)
+![Chassis monitor — per-motor driver, PWM, direction and encoder counts](/images/projects/screens/bekaert-agv.webp)
 
 The chassis monitor is the always-on view: target against measured wheel speed, applied PWM,
 and live encoder counts for all four motors.
 
-![Drive tab — annotated camera feed with line tracking](/images/projects/screens/bekeart-agv-2.webp)
+![Drive tab — annotated camera feed with line tracking](/images/projects/screens/bekaert-agv-2.webp)
 
 The drive view puts the annotated camera feed under the monitor, with the line offset, angle,
 lookahead and curvature the decision loop is actually working from.
 
-![Motor test — each driver on its own](/images/projects/screens/bekeart-agv-4.webp)
+![Motor test — each driver on its own](/images/projects/screens/bekaert-agv-4.webp)
 
 The motor test tab drives one side at a time, in encoder-PID or raw-PWM mode, with a 0 → 100 → 0
 ramp. It is the bench check that a driver, a motor and an encoder agree before the robot is
 allowed near a line.
 
-![LiDAR obstacle safety — stop, slow and clear zones](/images/projects/screens/bekeart-agv-5.webp)
+![LiDAR obstacle safety — stop, slow and clear zones](/images/projects/screens/bekaert-agv-5.webp)
 
 LiDAR safety runs three zones: stop, slow and clear. A sensor that goes stale or drops off
 stops the rover rather than letting it drive blind.
 
-![Recording — frames plus a detection log](/images/projects/screens/bekeart-agv-6.webp)
+![Recording — frames plus a detection log](/images/projects/screens/bekaert-agv-6.webp)
 
 Recording captures the camera frames and a log row per frame, so a fault can be traced back to
 the frame that caused it.
@@ -157,10 +174,10 @@ the frame that caused it.
     loop
     playsinline
     preload="metadata"
-    poster="/images/projects/screens/bekeart-agv.webp"
+    poster="/images/projects/screens/bekaert-agv.webp"
     class="w-full rounded border border-line bg-cream-200"
   >
-    <source src="/videos/bekeart-agv-01.mp4" type="video/mp4" />
+    <source src="/videos/bekaert-agv-01.mp4" type="video/mp4" />
     Your browser does not support the video tag.
   </video>
   <figcaption class="meta mt-3">AGV on the bench — drive train, encoder feedback and the operator dashboard.</figcaption>
@@ -173,10 +190,10 @@ the frame that caused it.
     loop
     playsinline
     preload="metadata"
-    poster="/images/projects/screens/bekeart-agv-2.webp"
+    poster="/images/projects/screens/bekaert-agv-2.webp"
     class="w-full rounded border border-line bg-cream-200"
   >
-    <source src="/videos/bekeart-agv-02.mp4" type="video/mp4" />
+    <source src="/videos/bekaert-agv-02.mp4" type="video/mp4" />
     Your browser does not support the video tag.
   </video>
   <figcaption class="meta mt-3">Line-following run under live telemetry.</figcaption>

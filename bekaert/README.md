@@ -97,9 +97,9 @@ STM32 uses encoder feedback to:
 - `VID-20261024-WA0018.mp4` — AGV build/footage (4.7 MB)
 - `VID-20261027-WA0025.mp4` — AGV build/footage (2.6 MB)
 
-These two clips are published on the portfolio as `public/videos/bekeart-agv-01.mp4`
-and `public/videos/bekeart-agv-02.mp4`, so the copies in this folder are the
+These two clips are published on the portfolio as `public/videos/bekaert-agv-01.mp4`
+and `public/videos/bekaert-agv-02.mp4`, so the copies in this folder are the
 source of record and are git-ignored to avoid storing the footage twice.
 
 Dashboard screenshots of the platform live in
-`public/images/projects/screens/bekeart-agv*.webp`.
+`public/images/projects/screens/bekaert-agv*.webp`.

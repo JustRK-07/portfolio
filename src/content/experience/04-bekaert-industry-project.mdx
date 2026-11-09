@@ -1,0 +1,14 @@
+---
+company: "Bekaert"
+website: "https://www.bekaert.com/"
+role: "Industry Project — Autonomous AGV Platform · Computer Vision & AI/ML"
+period: "July 2026 – Present"
+location: "Industry engagement (industrial AGV platform)"
+summary: "Industry engagement with Bekaert: the hardware and controls design for a 90 kg four-wheel line-following AGV — motor, driver and battery sizing against a single mass budget, encoder-closed-loop wheel-speed sync on STM32, and the telemetry dashboard the platform is operated from."
+bullets:
+  - "Sized the complete drive chain against one mass budget: 90 kg target closed to a 97–98 kg design mass with a 25 kg chassis, four 21 Nm motors on independent drivers at 36 A total rated current, and a 2S4P LiFePO4 pack (25.6 V, 120 Ah, 3.07 kWh) for a 6–8 hour duty cycle."
+  - "Closed the wheel-speed loop in firmware on STM32 using incremental A/B magnetic encoders on all four motors, so the commanded value is a speed rather than a PWM duty cycle — without it the left and right wheels drift apart and the rover curves off the line within seconds."
+  - "Built the operator telemetry dashboard the platform runs on: per-motor driver, PWM, direction and encoder counts, LiDAR stop/slow/clear safety zones, a per-driver bench test, and session recording — with a documented open constraint on the driver voltage ceiling that still has to be closed before the pack is built."
+technologies: [STM32, Arduino, NVIDIA Jetson Orin Nano, LiFePO4, Python, Flask, WebSockets, OpenCV, LiDAR, incremental encoders]
+sortOrder: 4
+---

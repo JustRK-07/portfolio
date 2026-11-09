@@ -46,11 +46,11 @@ const projects: Project[] = projectsRaw.map((p) => ({
   partner: p.data.partner,
 }));
 
-// Featured cases (top 2 by sortOrder among featured projects).
-const featuredProjects = projects.filter((p) => p.featured).slice(0, 2);
-const remainingProjects = projects.filter(
-  (p) => !featuredProjects.some((f) => f.slug === p.slug)
-);
+// Featured cases: the top three by sortOrder among featured projects.
+const featuredProjects = projects.filter((p) => p.featured).slice(0, 3);
+// The grid keeps every project, featured cases included, so the full
+// catalogue stays browsable (and filterable) in one place.
+const gridProjects = projects;
 const featuredMetric = (p: Project) =>
   p.metrics?.[0] ?? { label: 'year', value: String(p.year) };
 
@@ -214,7 +214,7 @@ const testimonials = [
         name={sidebar.name}
         firstName={sidebar.firstName}
         eyebrow="available for new roles · 2026"
-        pitch="Backend &amp; distributed-systems engineer. Two internships at Genxa Solutions shipped a sub-200ms p50 WebRTC SDK and a voice platform running 2.3K concurrent calls/day at 99.9% uptime; co-architected the CAD validation engine for ISGEC Heavy Engineering on real General Arrangement drawings. On my own time, a 7-agent LangGraph pipeline compresses 3–6 weeks of manual credit appraisal into under 4 minutes. Codeforces Expert (1619, top 10% globally), Cummins Merit Scholar '25, one IEEE paper published at I2ITCON 2026, and a granted South African patent."
+        pitch="Backend &amp; distributed-systems engineer. Two internships at Genxa Solutions shipped a sub-200ms p50 WebRTC SDK and a voice platform running 2.3K concurrent calls/day at 99.9% uptime; co-architected the CAD validation engine for ISGEC Heavy Engineering on real General Arrangement drawings, and designed the drive train and power system for a 90 kg line-following AGV at Bekaert. On my own time, a 7-agent LangGraph pipeline compresses 3–6 weeks of manual credit appraisal into under 4 minutes. Codeforces Expert (1619, top 10% globally), Cummins Merit Scholar '25, one IEEE paper published at I2ITCON 2026, and a granted South African patent."
         typewriterLines={typewriterLines}
         metrics={heroMetrics}
       />
@@ -253,7 +253,7 @@ const testimonials = [
               <p class="meta mb-2">// 02</p>
               <h2 class="text-[clamp(1.6rem,3vw,2.4rem)] font-semibold text-balance text-ink-900">Experience</h2>
               <p class="text-ink-700 mt-2 max-w-prose-thin text-pretty">
-                Production engineering at startups and industry engagements, focused on real-time systems and applied AI.
+                Production engineering at startups and industry engagements, focused on real-time systems, applied AI and industrial robotics.
               </p>
             </header>
             <div class="space-y-0">
@@ -284,7 +284,7 @@ const testimonials = [
             </header>
             <ProjectFilter categories={filterCategories} />
             <div class="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
-              {remainingProjects.map((p, i) => <ProjectCard index={i + 1} project={p} />)}
+              {gridProjects.map((p, i) => <ProjectCard index={i + 1} project={p} />)}
             </div>
           </section>
         </div>
