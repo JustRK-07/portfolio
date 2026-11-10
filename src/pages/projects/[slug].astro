@@ -22,7 +22,9 @@ const { Content } = await project.render();
 // Image alt map (mirrors ProjectCard.astro).
 const alts: Record<string, string> = {
   'adv-cad-validation': 'CAD drawing of test1 (Sheet 0001) with multiple hard-clash markers highlighted across structural members',
-  'intellicredit': 'Credit appraisal memo for Tata Steel with a 7-agent LangGraph workflow',
+  'intellicredit': 'Credit appraisal memo for Tata Steel, with the nine-node appraisal workflow and the chain of evidence behind each figure',
+  'bekaert-agv': 'AGV chassis monitor showing per-motor driver, PWM, direction and encoder counts',
+  'innovelty-ai': 'The novelty checker: the six-step pipeline from an idea to a filing decision',
   'foretell-vista': '7-day demand forecast chart for SKU-5821 with a promo flag and confidence band',
 };
 const coverAlt = alts[slug] ?? `${data.title} cover image`;

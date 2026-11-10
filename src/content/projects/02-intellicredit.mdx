@@ -2,7 +2,7 @@
 title: "IntelliCredit — Multi-Agent Credit Appraisal"
 year: 2026
 category: Fintech
-stack: [langgraph, react, postgres, fastapi, pgvector]
+stack: [react, typescript, vite, recharts, d3, jspdf]
 githubUrl: "https://github.com/JustRK-07/IntelliCredit-Multi-Agent-Credit-Appraisal-via-Account-Aggregator-GSTR-Reconciliation-Counterfactual"
 thumbnail: "/images/projects/screens/intellicredit.webp"
 images:
@@ -11,24 +11,103 @@ images:
   - "/images/projects/screens/intellicredit-2.webp"
 featured: true
 caseStudy: true
-summary: "India-Stack-native credit intelligence. Seven autonomous AI agents ingest via the Account Aggregator network, reconcile GSTR-2A vs GSTR-3B for ITC fraud, and produce an explainable Credit Appraisal Memo — including counterfactual reasoning — in ~4 minutes."
-problem: "India's corporate loan appraisal takes 3–6 weeks and costs banks roughly ₹80,000 per file. Existing automation is shallow and unauditable."
-approach: "Seven specialized LangGraph agents (ingestion, GSTR reconciliation, buyer-concentration risk, financial-trend analysis, fraud signal, counterfactual reasoning, memo writer) wired to a pgvector-backed retrieval layer for explainability. A 13-table PostgreSQL schema with provenance tracking and source attribution underwrites every credit decision; the memo writer enforces RBI compliance rules. Asynchronous orchestration on a real-time FastAPI / Redis pub-sub / WebSockets backend surfaces live workflow progress."
+summary: "India-Stack-native credit intelligence. A nine-node appraisal workflow — parallel spreading and GST verification, parallel reconciliation and buyer-concentration engines, then scoring, memo generation and counterfactual reasoning — built as a complete React front end over three fully worked borrower datasets."
+problem: "India's corporate loan appraisal takes 3–6 weeks and costs banks roughly ₹80,000 per file. Existing automation is shallow and, worse, unauditable: a score arrives with no way to trace a number back to the document it came from."
+approach: "Modelled the appraisal as a graph of nine nodes with two parallel groups, and built the analyst-facing surface around it: a nine-quarter GSTR-2A vs GSTR-3B reconciliation, buyer-concentration analysis, twelve ratio cards with sparklines, a Chain of Evidence that carries document, page, extraction method and confidence on every figure, a promoter-intelligence network, and a counterfactual engine that prices the path from a decline to an approval."
 results:
-  - "End-to-end appraisal in ~4 minutes (vs 3–6 weeks manual)"
-  - "Counterfactual reasoning: tells the borrower exactly what to change to get approved"
-  - "Audit-ready Credit Appraisal Memos with RBI compliance rules"
-  - "Account Aggregator + GSTN native integration"
-tech: [Python, LangGraph, LangChain, FastAPI, PostgreSQL, pgvector, Redis, WebSockets, React, OpenAI API]
+  - "Nine-node appraisal workflow with two parallel groups, surfaced as live per-agent progress"
+  - "Eight quarters of GSTR-2A vs GSTR-3B reconciliation per borrower, with variance and flagged quarters"
+  - "Chain of Evidence: document, page, extraction method and confidence on every ratio"
+  - "Counterfactual engine that prices a path to approval — repay ₹3 Cr of term debt for +8 points, DSCR 1.25× to 1.5× for +11"
+  - "Audit trail typed by actor, with human override and compliance badges on every state change"
+tech: [React 18, TypeScript, Vite, Tailwind, shadcn/ui, Recharts, D3, framer-motion, jsPDF, zod]
 metrics:
-  - { label: "agents", value: "7" }
-  - { label: "DB schema", value: "13 tbl" }
-  - { label: "runtime", value: "~4 min" }
-  - { label: "vs manual", value: "3–6 wk" }
+  - { label: "workflow nodes", value: "9" }
+  - { label: "routes", value: "10" }
+  - { label: "datasets", value: "3" }
+  - { label: "LOC", value: "~11.9K" }
 status: Public
 sortOrder: 3
 ---
 
-## Why counterfactual reasoning
+## The appraisal is a graph, not a pipeline
 
-A credit decision is only as useful as the path to overturn it. IntelliCredit's counterfactual agent takes the appraisal output and the underlying GSTR/AA data, and produces the minimal set of changes — higher revenue disclosure, paid-down exposure, GST-filing cleanup — that would flip the outcome. The borrower gets a roadmap, not a verdict.
+Most of the work in a credit file is independent of the rest, and the sequence is wrong if you
+model it as a straight line. The workflow is nine nodes in two parallel groups:
+
+```
+doc_parse ──┬─ fin_spread ──┐
+            └─ gst_verify ──┤
+                           ├─► promoter_intel ─► risk_score ─► cam_gen
+gstr_engine ┬─ buyer_engine ┘                          └─► counter_fact
+```
+
+Spreading and GST verification run together; reconciliation and buyer-concentration run
+together; everything downstream waits on both. The front end renders the graph as it runs,
+with per-agent progress, so the analyst watches the file assemble rather than staring at a
+spinner.
+
+## Reconciliation is the part that earns the file
+
+The GSTR-2A vs GSTR-3B view is the core: eight quarters per borrower, each carrying the
+supplier's claimed ITC against the invoice-level reality. The fraud dataset flags **5 of 8
+quarters**; the clean one flags none; the borderline one flags one. A flagged quarter is
+where a supplier's claimed credit and their filed return disagree, and that disagreement is
+the thing a credit committee cannot see by reading a spreadsheet.
+
+## Chain of Evidence
+
+Every ratio carries its own provenance — the document it came from, the page, the extraction
+method and a confidence score — and the UI renders that as a citation badge rather than a
+footnote. Twelve ratio cards per borrower, each with a four-point sparkline and a year-on-year
+delta, all of them traceable.
+
+This is the difference between an automated score and an auditable one. A score with no
+provenance is a number a credit officer has to re-derive by hand; a score with provenance is
+a number they can defend.
+
+## Counterfactual reasoning
+
+A decline is only useful if it comes with a way out. The counterfactual engine takes the
+appraisal and prices the changes that would flip it, each with its impact, difficulty and
+timeframe:
+
+| Action | Impact | Difficulty | Timeframe |
+| --- | --- | --- | --- |
+| Repay ₹3 Cr of term debt — D/E 1.85× → 1.5× | +8 points | medium | 6 months |
+| Cost optimisation — DSCR 1.25× → 1.5× | +11 points | hard | 9 months |
+| Diversify buyers — top 3 below 35% | +6 points | medium | 12 months |
+| Clear delayed MCA filings | +4 points | easy | 2 months |
+
+The borrower gets a roadmap, not a verdict.
+
+## The audit trail is part of the product
+
+Not a log file — a typed record. Every event carries an actor, an actor type
+(`ai_agent`, `human`, `system`), an action type, the module it touched, a confidence, and the
+previous and new value. Human overrides are first-class objects with their own workflow
+stage and compliance badge. When a file is challenged, the trail answers who changed what,
+when, and on whose authority.
+
+## Promoter intelligence
+
+A D3 force-directed graph over promoter and counterparty relationships, with shell-company
+and NPA-linked nodes flagged. Promoter reputation is one of the strongest predictors in a
+credit file and one of the hardest to get at in a structured form.
+
+## The memo
+
+The Credit Appraisal Memo is assembled in six sections — executive summary, business
+overview, financial analysis, promoter assessment, collateral assessment and risk
+mitigation — with the fraud dataset swapping in a *fraud indicators* section and the
+conditional dataset adding *conditions for approval*. Export is client-side jsPDF, with one
+module per section.
+
+## What is in the repository
+
+The public repository is the front end: a React 18 + TypeScript + Vite SPA, roughly 11,900
+lines across 10 routes and 12 page components, with about 1,800 lines of worked data for
+three borrowers — an approve, a fraud and a conditional case — and a `DatasetContext` that
+switches between them. `BACKEND_INTEGRATION_SPEC.md` documents the service architecture this
+surface is built against; the specification is explicit that the shipped data path is demo
+mode, and the front end is written against the typed contracts that mode will replace.

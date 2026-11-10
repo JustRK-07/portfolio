@@ -23,6 +23,54 @@ status: Private
 sortOrder: 9
 ---
 
+## The pipeline is the product
+
+Translating speech into sign is not one model — it is a chain of five, and the design
+question is which stage is allowed to need the network.
+
+| Stage | Model / method | Role | P50 |
+| --- | --- | --- | --- |
+| Audio capture | 16 kHz mono, WebRTC VAD gate, 30 s ring buffer | Frame the utterance | 8 ms |
+| Whisper STT | `tiny.en` int8, ONNX Runtime, beam 3 + word timestamps | Spoken English → text | 780 ms |
+| NL simplifier | Llama 3.1 8B via Groq — optional, online only | Rewrite into signable phrasing | ~210 ms |
+| SW Mapper | PyTorch local model, 5K sign dictionary, BPE tokenizer (5K vocab) | Text → SignWriting blocks | 420 ms |
+| Renderer | Sutton SignWriting, SVG with Lottie fallback, 60 FPS, 2D vectors | Blocks → animated sign | 86 ms |
+
+**Sync total 1.29 s; 1.84 s with the simplifier in the loop.** The simplifier is the only
+stage that reaches the network, and it is async and non-blocking — it never gates the sign.
+Turn on *offline-only mode* and there are zero cloud round-trips.
+
+## What "offline" actually means
+
+The guarantees are enumerated rather than assumed:
+
+- Whisper runs fully on-device — quantised to int8 and executed through ONNX Runtime.
+- The sign dictionary is bundled into the app; no lookup call leaves the machine.
+- SignWriting SVGs ship locally, so rendering does not fetch glyphs.
+- No external runtime dependency.
+- The NL simplifier is the single online exception, and it is optional.
+
+Bundle size is 42 MB. It builds for macOS on Apple Silicon (12 MB), Windows and Linux on
+x64 (28 MB each), and Snapdragon X (24 MB) — built for the Qualcomm Edge AI Consumer
+Utility track.
+
+## Reading the output
+
+The live transcript carries a sign-block count and an end-to-end latency per utterance, so
+you can see *why* something was slow. When the recogniser is not sure, the line is flagged
+rather than quietly rendered — `"Cancellations have... canceled."` comes back as
+**low confidence, ASR ambiguous**, which is the difference between a sign the user can
+trust and one they cannot.
+
+The renderer shows the sign string it is drawing (`SW#5821·b·ARM-RISE·RA`), the sign ID, the
+frame counter within the sign, and whether the app is in offline mode.
+
+## Languages
+
+Four ASR languages installed, three active. English (US) runs `tiny.en` int8 and English (UK)
+runs `base.en` int8, both 38 MB and both bundled; the models ship with the app rather than
+being downloaded on first use, so the app works on a machine that has never seen a network.
+
 ## Status
 
 Repository link intentionally withheld until the project is made public.

@@ -21,31 +21,125 @@ partner:
   tagline: "sugar machinery · boilers · cranes · process equipment"
   url: "https://www.isgec.com"
   description: "One of India's largest diversified heavy-engineering companies, founded in 1933 as Saraswati Sugar Syndicate and now listed on both BSE and NSE. ISGEC manufactures sugar machinery, fired and waste-heat boilers, EOT and level-luffing cranes, and pressure vessels at scales few Indian firms can match. The General Arrangement drawings validated by ADV are drawn from active ISGEC projects in heavy-lift cranes and process equipment."
-summary: "Two-phase CAD validation platform: a synchronous geometric rule engine plus an async LLM enhancement pass. Validates real General Arrangement drawings at scale."
-problem: "Manual review of structural and mechanical GA drawings is slow, inconsistent, and a bottleneck in heavy-engineering design cycles."
-approach: "Decoupled Phase 1 (parsing + 8-rule Shapely/Hungarian/RapidFuzz engine, ~1.8s on a 7.4MB drawing) from Phase 2 (async LLM enhancement via Gemini/Ollama with a hard timeout)."
+summary: "Two-phase CAD validation platform: a synchronous geometric rule engine plus an async LLM enhancement pass. Checks a structural GA drawing against its mechanical counterpart and reports every finding with the arithmetic behind it."
+problem: "A structural GA drawing and the mechanical GA drawing for the same floor have to agree with each other. Reviewing that by hand is slow, inconsistent, and a bottleneck in heavy-engineering design cycles — and the errors it catches are the expensive ones, because they surface on the shop floor rather than at the desk."
+approach: "Decoupled Phase 1 (a hand-written DXF/DWG parser and eight deterministic geometric checks) from Phase 2 (an async LLM pass that can only add findings, never replace them). The rule engine returns before the request does; the LLM runs behind it under a hard timeout and degrades to an explicit finding when it fails."
 results:
-  - "78 pytest cases, 91% statement coverage"
-  - "Phase 1 runs in ~1.8s on a real 7.4MB drawing (~17.8K entities)"
+  - "Eight distinct checks — tag, position, size, clash, clearance, elevation, missing and orphaned openings"
+  - "49 pytest cases across the rule engine, parser, revision ledger, normaliser and end-to-end flow"
+  - "Every finding carries the formula that produced it and the numeric result, so a reviewer can check the arithmetic"
+  - "SHA-256 revision ledger: re-uploading identical bytes is a 409, not a duplicate row"
   - "Semester-long industry engagement, sponsored by ISGEC Heavy Engineering"
-tech: [Next.js 14, FastAPI, SQLAlchemy 2, Pydantic v2, Google Gemini, Ollama, Shapely, RapidFuzz]
+tech: [Next.js 14, FastAPI, SQLAlchemy 2, Pydantic v2, Google Gemini 2.5 Flash, Ollama, Shapely, RapidFuzz, SQLite]
 metrics:
   - { label: "rules", value: "8" }
-  - { label: "tests", value: "78" }
-  - { label: "coverage", value: "91%" }
-  - { label: "phase-1", value: "1.8s" }
+  - { label: "tests", value: "49" }
+  - { label: "tables", value: "5" }
+  - { label: "llm timeout", value: "20s" }
 status: Public
 sortOrder: 2
 ---
 
 ## Context
 
-ISGEC Heavy Engineering produces large structural and mechanical General Arrangement (GA) drawings that historically required manual review by senior engineers. ADV replaces that review with a deterministic geometric rule engine layered with an LLM-assisted explanation pass, both gated by a strict latency budget.
+ISGEC Heavy Engineering produces large structural and mechanical General Arrangement (GA)
+drawings that historically required manual review by senior engineers. ADV replaces that
+review with a deterministic geometric rule engine layered with an LLM-assisted explanation
+pass, both gated by a strict latency budget.
 
-## What the rule engine does
+## Two phases, on purpose
 
-Eight rules cover structural, dimensional, and ID-consistency checks. The hot path uses Shapely's STRtree for sub-quadratic spatial indexing, a Hungarian-algorithm pass for 1:1 equipment matching, and RapidFuzz for fuzzy ID reconciliation. Together they catch the majority of mechanical-drawing defects that humans would normally flag.
+The analysis is split so the part that has to be trusted finishes before the part that might
+not.
 
-## Latency budget
+**Phase 1 is synchronous and deterministic.** No network, no model, no randomness — eight
+checks over the parsed geometry, and the request does not return until they are done.
 
-Phase 1 (sync) targets 1.8s on real 7.4MB drawings. Phase 2 (async) runs as a background enhancement via Gemini or a local Ollama model and writes its findings to a separate report — never blocking the user.
+**Phase 2 is a single LLM call** that runs in the background under a 20-second timeout. The
+front end polls for its status, and the deterministic results are already on screen while it
+works.
+
+The split matters because the failure modes are different. If the LLM times out it degrades
+to an explicit `AI-TIMEOUT` finding and the rule results still stand — it never fails the
+request, and it can only *append* findings, never overwrite one the rule engine produced.
+
+## Parsing CAD without trusting the file
+
+The DXF parser is hand-written rather than delegated to a library, and that is a decision
+about tolerance: real drawings are messy. The parser recovers from desync — a group code
+that is not an integer, or one outside the valid range, is appended to the previous token
+instead of aborting the file. Drawing units are read from `$INSUNITS` and converted to
+millimetres, so every tolerance in the rule engine is expressed in the same unit.
+
+DWG is handled by magic-byte version detection with a conversion attempt through libredwg.
+When that is unavailable the file is parsed partially — layers, elevations and pipe tags are
+sniffed out and the parse is marked `partial` rather than quietly pretending to be
+complete. IFC and PDF are stubs, and they say so.
+
+Entity labels are attached in two passes: the first collects every text and mtext entity, the
+second attaches each one to the nearest candidate within 800 mm **on the same sheet**. Labels
+are not assumed to sit near the thing they name.
+
+## The eight checks
+
+| Code | Check | Method | Tolerance |
+| --- | --- | --- | --- |
+| `TAG-VERIFY` | Fuzzy ID match | RapidFuzz ratio + grid proximity, optimal assignment | ≥0.80 pass, 0.55 manual |
+| `POS-DELTA` | Position | `√(Δx² + Δy²)` | ±25 mm, high above 100 |
+| `SIZE-DELTA` | Size | Per axis | ±10 mm, high above 50 |
+| `HARD-CLASH` | Clash | Shapely `STRtree` + intersection area | ≥1 mm² |
+| `CLEAR-VIOL` | Clearance | `STRtree` + buffer + distance | ≥50 mm |
+| `ELEV-DELTA` | Elevation | `|Δm| × 1000` | ±50 mm, high above 200 |
+| `OPEN-MISS` | Missing opening | Jaccard 3-gram similarity | 0.55, high |
+| `OPEN-ORPH` | Orphaned opening | Unmatched structural openings | medium |
+
+The spatial index is what keeps the clash and clearance checks sub-quadratic: candidate
+pairs come from an `STRtree` query rather than an all-pairs sweep, and only the surviving
+candidates are tested for intersection.
+
+Matching a mechanical entity to its structural counterpart is a one-to-one assignment
+problem, not a nearest-neighbour one — two openings must not both claim the same
+structural member. The implementation scores every candidate pair on label similarity and
+grid proximity, then solves the assignment optimally when SciPy is available and falls back
+to a greedy best-first path when it is not.
+
+## Findings explain themselves
+
+Every finding carries the formula that produced it alongside the numeric result:
+
+```
+0.45·lev + 0.40·cos + 0.15·prox = 0.87
+√((Δx = 80)² + (Δy = 80)²) = 113 mm  >  ±25 mm
+|13.150 − 13.350| × 1000 = 200 mm  >  ±50 mm
+area(m ∩ s) = 54000 mm²
+```
+
+A reviewer can check the arithmetic instead of taking the verdict on trust, and the
+evidence string carries the sheet, grid and the IDs on both sides of the comparison.
+
+## The revision ledger
+
+Drawing revisions are modelled as a chain rather than a pile. Each file is hashed with
+SHA-256 under a unique constraint, so re-uploading identical bytes returns **409
+DUPLICATE_REVISION** rather than silently creating a second copy. Revisions are grouped by
+a normalised family id — the filename is lowercased and revision markers stripped, so
+`TP-104 STR GA - Rev B.dwg` and `TP-104 STR GA - Rev C.dwg` land in the same family — and
+each revision letter points at the one it supersedes.
+
+## The LLM, and what it is allowed to do
+
+Structured output is enforced rather than hoped for: the response is requested as JSON
+against a Pydantic-generated schema, at `temperature=0.2`. Gemini 2.5 Flash is the default
+provider, with a local Ollama model (`qwen2.5:14b`) as the fallback — and if both are
+unavailable, a deterministic heuristic normaliser still produces usable output, so the
+system degrades in quality rather than in availability.
+
+The provider chain is: configured provider → the other provider → heuristic normalisation.
+Nothing in that chain can fail the request.
+
+## Structure
+
+FastAPI + SQLAlchemy 2 over SQLite in WAL mode, with a Next.js 14 front end. Five tables —
+`projects`, `files`, `entities`, `issues`, `revisions` — and roughly 4,400 lines of backend
+Python across 29 files, with the rule engine, parser, revision ledger, normaliser and
+end-to-end flow covered by 49 pytest cases.

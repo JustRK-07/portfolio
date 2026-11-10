@@ -2,7 +2,7 @@
 title: "AfterMath — On-Call SRE Agent with Memory"
 year: 2026
 category: Multi-Agent
-stack: [typescript, gpt-4o, nextjs, radix-ui]
+stack: [typescript, gpt-4o, nextjs, fastapi, hindsight]
 githubUrl: "https://github.com/JustRK-07/solver-squad-AfterMath"
 thumbnail: "/images/projects/cover-06-aftermath-sre-agent.webp"
 images:
@@ -11,18 +11,120 @@ images:
   - "/images/projects/screens/aftermath.webp"
 featured: true
 caseStudy: true
-summary: "An SRE agent that remembers every past outage, proposes evidence-cited mitigations with a real confidence score, refuses fixes that have backfired, and decays weak fixes. Built on Hindsight memory + OpenClaw SRE agent."
-problem: "When a service breaks at 3 a.m., the on-call engineer is alone with a wall of alerts. The lesson from the last time this happened lives in a Slack thread nobody can find."
-approach: "A DARC loop (Diagnose-Act-Record-Consolidate) wired to a memory bank. Every successful fix strengthens the memory; every failed fix is logged and used to refuse the same fix in the future. Decay scoring fades fixes that stop working."
+summary: "An SRE diagnosis agent that recalls similar past incidents from a memory bank, proposes evidence-cited mitigations, refuses fixes that have backfired before, and decays confidence as a fix stops working. The confidence score is computed from memory metadata — the model never supplies it."
+problem: "When a service breaks at 3 a.m., the on-call engineer is alone with a wall of alerts, and the lesson from the last time this happened lives in a Slack thread nobody can find. A generic incident bot has no memory of what actually worked at your shop, and it will cheerfully recommend the fix that failed last Tuesday."
+approach: "A DARC loop — Diagnose, Act, Record, Consolidate — over a Hindsight memory bank. Recall similar incidents, reason over them with a cautious senior-SRE persona, and compute the confidence of the recommendation from the recalled evidence rather than asking the model to self-report it."
 results:
-  - "Bank of India CyberShield 2026 entry"
-  - "Evidence-cited mitigations with confidence scores"
-  - "Refuses fixes that have backfired before; decays weak fixes over time"
-tech: [TypeScript, GPT-4o, Hindsight plugin, OpenClaw, Next.js 15, Radix UI]
+  - "Confidence computed from memory metadata across four factors — the model never supplies the number"
+  - "A measured 71 → 32 confidence collapse when a mitigation starts failing, with the weakening trend applied"
+  - "A do-not-do list: mitigations with a recorded failure are surfaced and explained, not repeated"
+  - "Provenance filtered down to the incidents that were actually recalled"
+  - "A memory-free baseline control that returns the same agent's answer with confidence 0, so the memory can be measured rather than assumed"
+tech: [TypeScript, Python, FastAPI, Next.js 15, React 19, GPT-4o, Hindsight Cloud, Radix UI, Tailwind]
 status: Public
 sortOrder: 7
 ---
 
 ## Memory is the product
 
-Generic AI incident bots hallucinate with no memory of what actually happened at your company. AfterMath refuses to recommend a fix that has already failed at your shop, and it gets visibly faster with each incident it sees.
+Generic incident bots hallucinate with no memory of what actually happened at your
+company. AfterMath's whole point is that it does, and that the memory is *earned* — the
+same incident resolved a hundred times should make the next one sharper, and the same
+mitigation that stopped working should stop being recommended.
+
+The seed corpus is eleven resolved incidents across four pattern clusters, and the
+architecture is built so the next one can be added.
+
+## DARC
+
+**Diagnose** — the agent recalls similar incidents from the memory bank and reasons over
+them. **Act** — a human applies the fix; the agent does not touch production, and the
+code says so. **Record** — the outcome goes back into memory as a first-person experience
+fact. **Consolidate** — the memory bank merges the new fact into the pattern cluster it
+belongs to.
+
+The flow through the API is deliberately simple: `POST /api/diagnose` takes a symptom,
+truncates it, and either takes the memory-free path or runs the full recall → reason →
+assemble → score pipeline. The response carries the root cause, the recommended fix, the
+list of mitigations to *avoid*, the supporting incident IDs, the computed confidence, a
+freshness warning, and the evidence itself.
+
+## The confidence score is computed, not claimed
+
+This is the part that matters. The model is never asked how sure it is. The score comes
+out of the recalled memory:
+
+```
+successRatio    = s / (s + f)                       # resolved vs. failed
+evidenceFactor  = min(1, n / 3)                      # 3+ incidents = full weight
+freshnessFactor = { stable 1.0, strengthening 1.0,
+                    weakening 0.5, stale 0.6 }
+recencyFactor   = clamp(1 − daysSinceLastEvidence / 90, 0.4, 1.0)
+
+confidence = round(100 × successRatio × evidenceFactor
+                      × freshnessFactor × recencyFactor)
+```
+
+Bands: ≥70 high, 40–69 medium, below 40 low. With no supporting incidents at all the
+score is forced to zero and the result is marked unverified — the agent is allowed to say
+"I don't know" and the arithmetic makes sure it does.
+
+## A mitigation that stops working loses the room
+
+Freshness is derived from the evidence trail, not asserted. If the last two pieces of
+evidence for a pattern are both failures, the trend is **weakening** and the freshness
+factor halves. If the newest evidence is more than 60 days old the trend is **stale**.
+Otherwise it is stable or strengthening.
+
+The effect is measurable. The pre-migration rate-limit cluster — four successes, no
+failures, stable, 26 days old — scores **71**. Add two failures and the trend flips to
+weakening: the same cluster now scores **32**, a *low* band recommendation. Nothing about
+the fix changed; the memory changed.
+
+| Cluster | n | s / f | Freshness | Score |
+| --- | --- | --- | --- | --- |
+| Pre-migration rate-limit | 4 | 4 / 0 | stable | **71** |
+| Database | 2 | 2 / 0 | stable | **53** |
+| Rate-limit | 6 | 4 / 2 | weakening | **32** |
+| Memory | 2 | 1 / 1 | stable | **18** |
+| TLS | 1 | 1 / 0 | stable | **15** |
+
+## Refusing a fix that has already failed
+
+Two mechanisms, and both are driven by the same memory. First, an explicit **do-not-do**
+list: if a mitigation has any recorded failure, it is surfaced with an explanation of when
+and why it failed, rather than being quietly proposed again. The seed makes it concrete —
+restarting pods is a recorded failure, adding an LRU cache is a recorded success.
+
+Second, the arithmetic does the same work quietly: `successRatio` falls as failures
+accumulate, and once the trend flips to weakening the freshness factor halves on top of
+that.
+
+## Provenance you can check
+
+Every step of the recommended fix carries the incidents that support it, and the supporting
+incident list is filtered down to what was actually recalled for this symptom. The
+response ships the evidence entries themselves — incident ID, date, outcome, root cause,
+resolution, MTTR — so the engineer can read the history rather than a summary of it.
+
+## The control case
+
+The API takes a `use_memory` flag. With it off, the same agent answers from the model
+alone: no recall, confidence forced to zero, marked unverified, no evidence. That is the
+control — it makes the memory's contribution measurable instead of assumed, and it is how
+you find out whether the agent would have said the same thing anyway.
+
+The agent's persona is deliberately cautious — skepticism 4, literalism 5, empathy 2 on a
+five-point scale, with the operating principle that evidence outranks instinct. It sees
+masked account identifiers and a small sample of transactions, never the raw corpus.
+
+## Scope
+
+The corpus is eleven seed incidents and the pattern clustering is four clusters; the
+repository's own documentation notes five, and the clustering as implemented yields four.
+Seventeen backend tests run against the confidence arithmetic and the recall path.
+
+Consolidation is delegated to the memory bank's own asynchronous merge rather than
+implemented locally, and the automatic re-scheduling of a rejected recommendation is
+roadmap rather than shipped. The frontend carries a separate mock corpus for the demo
+surface; the backend corpus is the seed set above.

@@ -2,7 +2,7 @@
 title: "OS-Devin — Evaluation Harness for Coding Agents"
 year: 2026
 category: Multi-Agent
-stack: [python, langgraph, docker, ast, litellm]
+stack: [python, docker, tree-sitter, litellm, pytest]
 githubUrl: "https://github.com/JustRK-07/os-devin-multi-agent-system"
 thumbnail: "/images/projects/cover-03-os-devin-eval-harness.webp"
 images:
@@ -11,22 +11,89 @@ images:
   - "/images/projects/screens/os-devin-2.webp"
 featured: true
 caseStudy: true
-summary: "A measurement instrument for autonomous coding agents. Four-agent LangGraph system (Planner, Code, Reviewer, Debugger) benchmarked across 18 hand-curated tasks, 4 agent configurations, and 3 LLM backends — with Docker-managed isolation and AST-based side-effect guards."
-problem: "Most agentic-coding demos show a single run. They don't isolate the marginal contribution of each architectural component, so 'it worked once' gets mistaken for 'it works'."
-approach: "Treat the agent stack as a configurable benchmark. Toggle a self-healing retry loop, an AST pre-edit guard, and a per-task Docker sandbox; measure pass-rate delta on a fixed task suite with oracle-based scoring."
+summary: "A measurement protocol for autonomous coding agents: 18 curated tasks, 4 ablation configurations and 3 LLM backends, scored deterministically with oracle tests and a rubric — so the marginal contribution of each architectural component can be stated as a number rather than a demo."
+problem: "Most agentic-coding demos show a single run. They don't isolate the marginal contribution of each architectural component, so \"it worked once\" gets mistaken for \"it works\" — and nobody can say whether the retry loop, the guard, or the sandbox was the reason."
+approach: "Treat the agent stack as a configurable benchmark. Fix the task suite, fix the scoring, and vary one component at a time: baseline, then a self-healing retry loop, then an AST pre-edit guard, then Docker-managed per-task isolation. Every run logs the hashes that make it comparable to a run weeks later."
 results:
-  - "Reproducible 4-config × 3-backend matrix on 18 hand-curated tasks"
-  - "Isolates the marginal lift of each architectural component"
-  - "Defensible methodology: any fork can rerun and disagree publicly"
-tech: [Python 3.12, LangGraph, LangChain, LiteLLM, tree-sitter AST, Docker, pytest, Next.js (dashboard)]
+  - "18 curated tasks with a pinned task-set version, so the benchmark cannot drift under you"
+  - "Deterministic scoring only — no model in the scoring loop, so the scorer is replayable"
+  - "Wilson score intervals at 95% on every proportion, with three replicates per cell because model APIs are non-deterministic even at temperature 0"
+  - "A failure taxonomy of 18 classes in 7 families, so a regression is diagnosable rather than just a lower number"
+  - "Reproducibility invariants — prompt, config and task hashes on every run"
+tech: [Python 3.12, LiteLLM, tree-sitter, Docker, pytest, Wilson intervals]
 metrics:
   - { label: "tasks", value: "18" }
   - { label: "configs", value: "4" }
   - { label: "backends", value: "3" }
+  - { label: "failure classes", value: "18" }
 status: Public
 sortOrder: 4
 ---
 
 ## The product is the table, not the agent
 
-The harness is what matters. Anyone running it and disagreeing with the methodology is welcome to fork, modify the configs, and rerun — the system is designed to be falsified.
+The harness is what matters. Anyone running it and disagreeing with the methodology is
+welcome to fork, modify the configs, and rerun — the system is designed to be
+falsified.
+
+## Determinism is the whole design
+
+Two rules make the numbers mean something.
+
+**No model in the scoring loop.** A task passes because its oracle tests pass, not
+because a judge model thought it looked right. The rubric checks are mechanical too:
+unused imports via `ruff --select F401`, diff size via `git diff --shortstat`, no
+forbidden file edits, the existing tests still pass, no new dependencies, type
+annotations complete via mypy. The scorer is replayable from a saved JSONL trace, so a
+result can be re-derived rather than trusted.
+
+**Three replicates per cell.** Model APIs are non-deterministic even at `temperature = 0`,
+so one run is one sample, not a result. Every `(task, config, backend)` cell is run
+three times, and proportions are reported with Wilson score intervals at 95% rather
+than bare percentages.
+
+## Failure has to be diagnosable
+
+A pass rate of 74% tells you nothing about why the other 26% failed. The taxonomy
+gives every failure a class — `syntax_error`, `off_by_one`, `infinite_loop`,
+`wrong_api`, `incomplete_fix` and a dozen more — grouped into seven families: logic,
+type, import, syntax, runtime kill, scope, and infrastructure. The matcher returns
+`exact`, `family`, `wrong` or `n/a`, and scores 1.0, 0.5, 0.0 or excludes the cell. A
+config that regresses from 72% to 66% can then be read: it broke three tasks in the
+scope family, which is a different fix than three logic errors.
+
+## The four configurations
+
+The stack is deliberately a series of one-component changes — no guards, then the
+self-healing retry loop, then the AST pre-edit guard, then Docker isolation on top —
+so each delta is attributable.
+
+The **AST guard** is the interesting piece. It wraps the file-write tools: the edit is
+parsed with `tree-sitter`, the import graph is computed, and an edit that breaks a
+downstream consumer is blocked before it is written. The dashboard design shows what
+that looks like in practice on an OAuth2 migration — a hardcoded JWT secret blocked
+with the offending line quoted, a database migration written outside the task's scope
+blocked by scope analysis, a raw password log blocked on a third attempt, and the
+final patch allowed once all three guards passed.
+
+The **sandbox** is Docker-managed per task: `python:3.12-slim`, no network, auto-removed
+after the run, with `rlimits` on CPU seconds, memory, file descriptors and process count
+as the local fallback.
+
+## Reproducibility as an invariant
+
+Every run records `prompt_hashes`, `config_hash`, `task_hash` and the model version.
+The rule the design follows is blunt: *a run from week 1 is comparable to a run from
+week 5 only if the hashes match.* The task suite is version-pinned on the same
+principle SWE-bench uses — you cannot quietly change the exam and keep the score.
+
+## What is in the repository
+
+The public repository ships the measurement design: the architecture, the flow, the task
+design, the ablation configuration, the evaluation methodology, the failure taxonomy,
+the results template and a doc-completeness validator — 41 checks that keep the
+twelve-document specification self-consistent, resolving every relative link and
+asserting every required section is present. The harness, task set, configurations and
+results are the build that follows from that specification, and the results document is
+a placeholder until the matrix has been run end to end. The screenshots on this page
+are the dashboard design that the harness is specified against.

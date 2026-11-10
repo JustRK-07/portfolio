@@ -2,7 +2,7 @@
 title: "SAR-AI — Multi-Agent AML Compliance"
 year: 2026
 category: Fintech
-stack: [python, langchain, react, react-flow, fastapi]
+stack: [python, fastapi, ollama, react, react-flow]
 githubUrl: "https://github.com/JustRK-07/SAR-AI-Multi-Agent-Compliance-Automation-with-Sentence-Level-Audit-Provenance"
 thumbnail: "/images/projects/cover-07-sar-ai-compliance.webp"
 images:
@@ -11,18 +11,130 @@ images:
   - "/images/projects/screens/sar-ai-3.webp"
 featured: true
 caseStudy: true
-summary: "Five-agent Suspicious Activity Report (SAR) narrative generator with sentence-level audit provenance. Constitutional AI prevents speculation. React Flow visualizes the underlying transaction graph."
-problem: "AML SARs are written by analysts under deadline pressure. The result is inconsistency, speculation, and no audit trail back to the underlying evidence."
-approach: "Five agents collaborate (intake, transaction graph, evidence retrieval, narrative drafter, audit prover) backed by ChromaDB and Llama 3.1 via Ollama. Every sentence in the output maps to a clickable evidence trail."
+summary: "Five-agent Suspicious Activity Report (SAR) narrative generator with a per-sentence evidence panel. A deterministic Fact Checker re-reads every generated sentence, scores each claim against the database, and marks the ones a human must review."
+problem: "AML SARs are written by analysts under deadline pressure. The result is inconsistency, speculation, and — the part that matters later — no audit trail back to the underlying evidence. When a filing is challenged, the analyst has to reconstruct the reasoning by hand."
+approach: "Five agents in sequence over a six-table schema: a Data Analyst that runs the aggregate SQL and flags five suspicious patterns, a Compliance Specialist that classifies the typology against seven FinCEN activity codes, a Narrative Writer, a Fact Checker, and an Editor. The Fact Checker is the important one — it is not a model at all."
 results:
-  - "Click any sentence to see its supporting evidence"
-  - "React Flow visualizes the transaction graph"
-  - "Constitutional AI: refuses to speculate beyond retrieved evidence"
-tech: [FastAPI, Python 3.11, LangChain, LangGraph, ChromaDB, Ollama (Llama 3.1), React 18, TypeScript, TailwindCSS, TanStack Query, React Flow]
+  - "Click any sentence to open an evidence panel: the SQL, the query results, and a per-claim confidence bar"
+  - "Five regex claim types extracted from every generated sentence — numbers, INR amounts, dates, account references, FinCEN codes"
+  - "Claims scored against database aggregates with a 1% tolerance; unresolved claims are capped and flagged for review"
+  - "Six hand-written transaction-graph detectors: collection, high-risk jurisdiction, layering, structuring, round-trip and rapid activity"
+  - "Six curated FinCEN / FATF / PMLA reference documents injected into the generation prompt"
+tech: [FastAPI, Python 3.11, SQLAlchemy 2, Ollama (Llama 3.1 8B), React 18, TypeScript, React Flow 11, ReportLab]
 status: Public
 sortOrder: 8
 ---
 
-## Sentence-level provenance
+## Why per-sentence provenance
 
-For a regulator, "the system said so" is not an answer. SAR-AI ships with a clickable audit trail — every sentence in the narrative links back to the transaction and the retrieval that produced it.
+A regulator does not ask whether the document is trustworthy. They ask about the
+*assertion*. If a filing says ₹9,889 was deposited on 30 January, the question is which
+deposit, not whether the system is generally reliable. So the unit of audit in this system
+is the sentence.
+
+Each sentence in the narrative is clickable, and the panel behind it carries the SQL that
+was run, the rows it returned, a confidence bar, and the verdict on each individual claim
+the sentence makes.
+
+## The five agents
+
+| # | Agent | Uses a model? | Job |
+| --- | --- | --- | --- |
+| 1 | Data Analyst | No | Pull the alert and customer, run the aggregate SQL, flag five suspicious patterns |
+| 2 | Compliance Specialist | Ollama, rule-based fallback | Classify the typology and assign the FinCEN activity code |
+| 3 | Narrative Writer | Ollama, template fallback | Draft the narrative, then apply the constitutional checks |
+| 4 | Fact Checker | **No** | Extract the claims, verify each one, annotate what needs review |
+| 5 | Editor | Ollama, rule-based fallback | Grammar and style only — no new information |
+
+The orchestration is a plain async sequence with a progress callback in fixed bands
+(0–20 / 20–40 / 40–70 / 70–90 / 90–100 %), and the front end polls the task endpoint
+once a second to draw the progress bar.
+
+Every model call has a rule-based fallback, so the pipeline degrades in quality rather
+than failing outright.
+
+## The Fact Checker is the point
+
+The Writer is allowed to generate freely — it sees only a small sample of transactions and
+only the **last four digits** of any account number. What it is not allowed to do is
+assert something unsupported.
+
+So after generation, a second pass re-reads the text and pulls out five kinds of claim
+with regular expressions: numbers, currency amounts (with Indian lakh/crore parsing),
+dates, account references, and FinCEN activity codes. Each is then checked against the
+database:
+
+- **Numbers** against the transaction count, the distinct source count and the sentence
+  count, within 1% relative tolerance.
+- **Currency** against the aggregate total.
+- **Dates** against the transaction date range — exact is 1.0, inside a 30-day buffer is
+  0.85, outside it is 0.3.
+
+A sentence's confidence is the *minimum* across its claims, and a claim that cannot be
+matched at all returns 0.5 — which means any sentence containing an unmatched number or
+an account reference is flagged rather than trusted.
+
+Below 0.70 the sentence is marked `[REVIEW REQUIRED: Confidence NN%]`; between 0.70 and
+0.95 it gets a `[*]`. Those markers persist into the final narrative and into the
+exported PDF, so the analyst sees exactly which sentences need a human.
+
+## The constitutional principles
+
+Five principles govern what the narrative may assert, each with a severity:
+
+| Principle | Enforcement |
+| --- | --- |
+| Only state facts supported by transaction data | Checked downstream by the Fact Checker |
+| Do not speculate about customer intent | Banned phrases: *appears to be, seems like, probably, might be, clearly trying to* |
+| Use formal regulatory language | Banned words: *shady, sketchy, weird, fishy, bad* |
+| Include specific dates, amounts, account numbers | Checked downstream by the Fact Checker |
+| Cite FinCEN activity codes | Required by the prompt |
+
+The two rules that can be checked mechanically are checked by the Fact Checker rather than
+the Writer, which keeps the Writer from having to police its own output. The writer's own
+enforcement is a filter that strips the banned phrases and formalises contractions — and
+the Editor's instruction is explicit that it must not add information, change amounts or
+alter dates.
+
+## The transaction graph, without a graph library
+
+The graph is built from plain dicts rather than a graph package, and the analysis is six
+hand-written detectors:
+
+| Detector | Rule |
+| --- | --- |
+| Collection pattern | More than 10 distinct inbound sources to the subject account |
+| High-risk jurisdiction | Any node in a flagged offshore jurisdiction |
+| Layering | Same-day or next-day outbound ≥50% of that day's inbound, over ≥3 instances |
+| Structuring | Amount inside the 85–99% band below the CTR threshold, across ≥3 transactions |
+| Round-trip | Accounts that both sent to and received from the subject |
+| Rapid activity | 5 or more transactions inside 24 hours |
+
+Node labels carry only the last four digits of an account number, and the React Flow
+view lays the graph out on a fixed five-column grid — edges coloured and weighted by
+amount, the subject account in blue and anything high-risk in red.
+
+## Regulatory context
+
+Six curated reference documents — FinCEN guidance on structuring, layering, collection
+and rapid movement, FATF Recommendation 20, and India's PMLA 2002 — are injected into the
+generation prompt, scoped to the typology the Compliance Specialist assigned. Seven FinCEN
+typologies are supported, each with its activity code.
+
+## Schema
+
+Six tables: `customers`, `alerts`, `transactions`, `sars`, `audit_logs` and
+`knowledge_docs`. The audit table is the one that matters — it is keyed on
+`(sar_id, sentence_index, entry_type)`, and three rows are written per sentence: the
+`sql_query`, the `fact_verification` and the `llm_generation` record.
+
+The seed database carries ten customers, ten alerts and 240 transactions worth about
+₹18.3 Cr, across collection, structuring, layering and rapid-movement scenarios.
+
+## Scope
+
+The pipeline, the evidence panel, the graph and the detectors are implemented and
+runnable. The audit rows are written per sentence against the aggregate query the Data
+Analyst ran — they are a genuine evidence trail, but they are not a row-level link from
+a sentence to specific transaction IDs, and the design docs treat that as the next step
+rather than a shipped feature.

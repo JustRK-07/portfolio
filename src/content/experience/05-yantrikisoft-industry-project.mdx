@@ -1,14 +1,14 @@
 ---
 company: "Yantrikisoft"
 website: "https://www.yantrikisoft.com/"
-role: "Industry Project — Multi-Stakeholder Demand Forecasting (Foretell Vista)"
+role: "Industry Project — Retail Demand Forecasting & Inventory Optimisation (Foretell Vista)"
 period: "Feb 2026 – May 2026"
-location: "Industry engagement (federated retail)"
-summary: "Industry-engagement project for Yantrikisoft: PyTorch STGNN with federated learning across retail silos, causal attribution via SHAP + DoWhy, and adaptive inventory replenishment via Ray RLlib. 14.2% → 11.1% MAPE across 4,200 SKUs."
+location: "Industry engagement (retail analytics)"
+summary: "Industry-engagement project for Yantrikisoft: a multi-tenant retail analytics platform on a 73,100-row dataset — a 45-feature gradient-boosting demand model with conformal intervals, PSI drift monitoring, a three-estimator causal ensemble that reports its own disagreement, and an inventory simulator with an RL policy measured against a heuristic baseline."
 bullets:
-  - "Improved 7-day MAPE from 14.2% → 11.1% across 4,200 SKUs via PyTorch STGNN; outperformed LightGBM by 2.1 and ARIMA by 3.1 MAPE points on held-out Q4 data."
-  - "Fixed promotion misattribution via SHAP + DoWhy causal inference, directly informing enterprise campaign-budget allocation; cut cross-silo data transfer to zero using FedAvg federated learning."
-  - "Replaced static inventory thresholds with adaptive reorder policies via Ray RLlib RL agents across multi-dimensional state-action spaces."
-technologies: [PyTorch, STGNN, XGBoost, Ray RLlib, SHAP, DoWhy, Federated Learning, CVXPY, FastAPI]
+  - "Built the demand model end to end on 73,100 rows across five stores and twenty products: 45 lag, rolling, calendar, price and competitor features into a gradient-boosted regressor, reaching MAE 71.6 and RMSE 92.0 on a held-out window against a naive lag-1 baseline MAE of 89.2 — with zero-demand rows treated as censored rather than as zeros."
+  - "Triangulated promotion effects with three independent estimators (propensity matching, doubly-robust residual regression and difference-in-differences) combined by inverse-variance weighting, and surfaced the disagreement rather than hiding it — the three methods spread 187% on the shipped data, which the platform reports as a warning."
+  - "Replaced fixed reorder thresholds with a SimPy inventory simulator and a PPO policy trained via Stable-Baselines3, measured against the (s,S) baseline on the same episodes: 12.8% lower total inventory cost at an equal service level, plus PSI drift monitoring over six features to catch the model going stale."
+technologies: [Python, FastAPI, scikit-learn, NetworkX, Stable-Baselines3, Gymnasium, SimPy, MAPIE, SHAP, React, Vite, Recharts]
 sortOrder: 5
 ---

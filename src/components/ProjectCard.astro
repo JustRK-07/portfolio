@@ -49,8 +49,8 @@ const alts: Record<string, string> = {
 
   // IntelliCredit — credit appraisal
   'intellicredit/0': 'Credit appraisal memo for Tata Steel: score 743, BBB+ risk, 7-agent LangGraph workflow',
-  'intellicredit/1': 'Decline decision card explaining a phantom-ITC mismatch with a 3-step counterfactual path-to-approve',
-  'intellicredit/2': 'GSTR-2A vs GSTR-3B reconciliation matrix for seven suppliers with colored heatmap',
+  'intellicredit/1': 'Decline card explaining the ITC mismatch and the counterfactual path to approval, with each action scored and timed',
+  'intellicredit/2': 'GSTR-2A vs GSTR-3B reconciliation across eight quarters with the variance heatmap and the flagged quarters',
 
   // OS-Devin — eval harness
   'os-devin-eval-harness/0': '18×3 evaluation matrix showing pass-rate per task across gpt-4o, Claude Opus, and Gemini 1.5',
@@ -59,32 +59,32 @@ const alts: Record<string, string> = {
 
   // Foretell Vista — federated forecasting
   'foretell-vista/0': '7-day demand forecast chart for SKU-5821 with a promo flag mid-week and confidence band',
-  'foretell-vista/1': 'Federated training console: per-silo loss curves converging at round 42 of 60',
-  'foretell-vista/2': 'Ray RLlib replenishment training curve and top-10 SKU reorder queue with confidence scores',
+  'foretell-vista/1': 'Federated training console: per-silo local loss curves at round 42 of 60, with the sigma band and the bytes transferred',
+  'foretell-vista/2': 'Replenishment training curve against the baseline policy, with the top-10 SKU reorder queue and their confidence',
 
   // Rail Yard — yard scheduling
-  'rail-yard-slot-and-conflict-manager/0': '6-track yard schedule for Pune Junction showing 12 active trains and zero conflicts',
-  'rail-yard-slot-and-conflict-manager/1': 'DB-rejected reservation: timeline showing the overlap window on track PL-02 with fix suggestions',
-  'rail-yard-slot-and-conflict-manager/2': 'Reservation drawer for T-22841 with all GiST exclusion pre-checks passing',
+  'rail-yard-slot-and-conflict-manager/0': 'Yard schedule view showing the five tracks, their lengths and setup and clearance buffers, with train assignments on the timeline',
+  'rail-yard-slot-and-conflict-manager/1': 'A reservation the database refused, showing the overlapping window on the track and why the write was rejected',
+  'rail-yard-slot-and-conflict-manager/2': 'Reservation detail with the effective occupancy window and the buffer bounds the schema enforces',
 
   // AfterMath — SRE agent
-  'aftermath-sre-agent/0': 'Live triage of INC-2026-1142 across the four Diagnose-Act-Record-Consolidate stages with the agent chat log',
-  'aftermath-sre-agent/1': 'Memory bank browser listing 487 episodes with one high-confidence fix selected',
-  'aftermath-sre-agent/2': 'GRR forensic analyst view of file collection and process list from the referenced tool',
+  'aftermath-sre-agent/0': 'Incident diagnosis across the four DARC stages, with the evidence-cited recommendation and the computed confidence',
+  'aftermath-sre-agent/1': 'Memory bank browser listing past incidents with their outcomes, freshness and the confidence each one carries',
+  'aftermath-sre-agent/2': 'Recall detail showing the incidents retrieved for the symptom, the evidence behind each, and the mitigations to avoid',
 
   // SAR-AI — AML compliance
-  'sar-ai-compliance/0': 'Transaction graph showing EU counterparties (some OFAC-flagged) flowing through a customer to a Chinese exchange',
-  'sar-ai-compliance/1': 'SAR narrative with clickable sentence-level provenance and the 5-agent execution trace',
-  'sar-ai-compliance/2': 'Case analytics dashboard with 30 days of filings and a constitutional-AI refusal log',
+  'sar-ai-compliance/0': 'Transaction graph with the subject account in blue, high-risk jurisdictions in red, and edges weighted by amount',
+  'sar-ai-compliance/1': 'SAR narrative with clickable sentence-level evidence and a confidence bar for every claim in the sentence',
+  'sar-ai-compliance/2': 'Case analytics dashboard with the alert scenarios, risk bands and the regulatory context applied to each typology',
 
   // SignHear — voice-to-sign
-  'signhear/0': 'Live translation window: audio waveform, running transcript, and a Sutton SignWriting stick figure',
-  'signhear/1': '5-stage offline pipeline diagram with a 1.29-second sync latency budget per stage',
+  'signhear/0': 'Live translation window: audio waveform, running transcript with per-utterance latency, and a Sutton SignWriting stick figure',
+  'signhear/1': '5-stage offline pipeline diagram with the per-stage latency budget and the offline guarantees',
   'signhear/2': 'Settings panel showing three active ASR languages and dictionary coverage',
 
   // NHAI Netra — mobile field verification
-  'nhai-netra/0': 'NHAI field operations check-in screen with biometric pipeline, 94% average trust, 28 successes',
-  'nhai-netra/1': 'Tamper-evident SHA-256 ledger history showing four check-ins with trust scores 91–95',
+  'nhai-netra/0': 'NHAI field operations check-in screen with the biometric pipeline, 94% average trust, 28 successes and the offline ledger notice',
+  'nhai-netra/1': 'Tamper-evident SHA-256 ledger history showing four check-ins with trust scores 91–95 and their chain links',
   'nhai-netra/2': 'Cloud synchronization screen confirming 4 records synced successfully',
   'nhai-netra/3': 'Alternate check-in screen with status bar and same biometric pipeline',
 };

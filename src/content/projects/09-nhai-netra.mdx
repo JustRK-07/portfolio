@@ -24,6 +24,44 @@ status: Private
 sortOrder: 10
 ---
 
+## Offline-first, because the network is not always there
+
+A field surveyor checking attendance on a highway project is often somewhere the cellular
+signal is poor and the work still has to be recorded. So the app writes to a local,
+tamper-evident ledger first and syncs when it can — the record never depends on the
+network being up at the moment of capture.
+
+The check-in screen is the whole flow in one view: start the biometric pipeline, and the
+running averages sit next to it — **94% average trust** and **28 successes** so far, with
+enrolment of a new employee as a separate action rather than an implicit side effect of
+checking in.
+
+## The ledger
+
+Every check-in is hashed into a SHA-256 chain, and the history screen verifies that chain
+before it renders anything — the banner reads *tamper-evident SHA-256 ledger verified*
+only after that check passes.
+
+Each entry carries the record id, the timestamp, a trust score, the digest, and where the
+record sits in the chain — **Linked** for an ordinary entry, **Genesis** for the first one.
+Trust scores in the sample history run 91–95, so the score is a live signal rather than a
+constant, and the hash is what makes the sequence verifiable after the fact.
+
+## Sync
+
+The sync screen separates the two states that usually get conflated: what is still sitting
+on the device and what has made it to the server. Pending local records, records
+successfully synced, when the last attempt was, and the network state — *online, ready to
+sync* — with an explicit **All Synced** action rather than a background spinner that
+pretends the work is done.
+
+## Contracts, not copy-paste
+
+The mobile app and the admin dashboard are separate frontends, so the types that cross
+between them are shared: `zod` schemas define the payloads once, and both sides validate
+against the same definition. A field added to a check-in record reaches the dashboard
+without a second hand-written type drifting out of sync.
+
 ## Status
 
 Repository link intentionally withheld until the project is made public.

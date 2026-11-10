@@ -11,22 +11,122 @@ images:
   - "/images/projects/screens/rail-yard-2.webp"
 featured: true
 caseStudy: true
-summary: "Full-stack rail-yard scheduling: Java 21/Spring Boot 4.0 REST API, Angular 21 dispatcher shell, and a normalized PostgreSQL 17 schema. Conflict-free reservations enforced at the database layer via a partial GiST exclusion constraint."
-problem: "Dispatchers need to assign trains to yard tracks without creating schedule conflicts, and the conflict check has to be atomic under concurrent writes."
-approach: "Normalised PostgreSQL schema with three Flyway migrations, a partial GiST exclusion constraint enforcing non-overlapping track reservations for PLANNED and ACTIVE rows, an RFC-style error envelope with correlation IDs, and a multi-stage Docker Compose deployment behind a 3-job CI pipeline."
+summary: "Full-stack rail-yard scheduling: Java 21 / Spring Boot 4.0 REST API, Angular 21 dispatcher shell, and a normalised PostgreSQL 17 schema. Conflict-free reservations are enforced at the database layer by a partial GiST exclusion constraint, not by application code."
+problem: "Dispatchers assign trains to yard tracks, and the conflict check has to be atomic. Two requests can both look at the same free window at the same moment, both see no conflict, and both write — a check-then-act race that no amount of application-layer care fully closes."
+approach: "Push the invariant into the database: a partial GiST exclusion constraint over a half-open tstzrange on the effective occupancy window, keyed on yard and track. Setup and clearance buffers are applied before the window is stored, and a set of CHECK constraints bounds the window so no writer can bypass the exclusion constraint with an infinity bound."
 results:
-  - "Conflict-free reservations verified at the database layer (no app-side race window)"
-  - "12 backend tests pass against PostgreSQL 17 (Testcontainers)"
-  - "3-job GitHub Actions CI: lint, test, build"
+  - "No-overlap invariant enforced by PostgreSQL — conflicting writes are rejected regardless of application race"
+  - "Half-open `[)` ranges, so back-to-back reservations on one track are legal"
+  - "Five CHECK constraints bound the effective occupancy window to ±24 h around the scheduled window"
+  - "Testcontainers against real PostgreSQL 17 — exclusion-constraint behaviour cannot be reproduced on an in-memory substitute"
+  - "RFC-style error envelope with a correlation ID propagated into the logs via MDC"
 tech: [Java 21, Spring Boot 4.0, Angular 21, PostgreSQL 17, Flyway, Testcontainers, Docker, Nginx, GitHub Actions]
 metrics:
-  - { label: "tests", value: "15" }
   - { label: "tables", value: "7" }
-  - { label: "CI jobs", value: "3" }
+  - { label: "backend tests", value: "12" }
+  - { label: "endpoints", value: "17" }
+  - { label: "buffer bound", value: "24 h" }
 status: Public
 sortOrder: 6
 ---
 
 ## Why the database owns the constraint
 
-Pushing the no-overlap rule into a GiST exclusion constraint means the database rejects conflicting writes even if the application layer races. Setup and clearance buffers are bounded by an additional CHECK constraint so a compromised writer can't bypass the GiST.
+This is the whole design. The no-overlap rule is not a service method, a repository query
+or a validator — it is a constraint:
+
+```sql
+ALTER TABLE track_reservations
+    ADD CONSTRAINT ex_reservations_no_track_overlap
+    EXCLUDE USING gist (
+        yard_id WITH =,
+        track_id WITH =,
+        tstzrange(occupied_from, occupied_until, '[)') WITH &&
+    )
+    WHERE (status IN ('PLANNED', 'ACTIVE'));
+```
+
+Three details in that clause carry the weight.
+
+**The range is half-open — `'[)'`.** A train that departs at 10:00 and one that arrives at
+10:00 are adjacent, not overlapping. With a closed range every handover would be a
+conflict, and the constraint would be useless in a yard whose whole job is handover.
+
+**The predicate is partial.** Only `PLANNED` and `ACTIVE` reservations block. A
+`COMPLETED` or `CANCELLED` row is history and must not reserve space.
+
+**`yard_id` is in the key deliberately.** It looks redundant — the track already belongs to
+a yard — but it means a future migration that drops the `(track_id, yard_id)` composite
+foreign key cannot silently re-introduce a cross-yard hazard. The exclusion constraint
+would still refuse the write.
+
+The equality operators on the UUID columns need `btree_gist`, which the first migration
+installs.
+
+## The window a writer can actually store
+
+An exclusion constraint over a range is only as good as the range, and a range can be
+poisoned. A writer that sets `occupied_until = 'infinity'` satisfies the constraint
+trivially — it overlaps nothing because it ends after the end of time.
+
+So the effective occupancy window is bounded by five CHECK constraints:
+
+```sql
+CONSTRAINT ck_reservations_schedule       CHECK (scheduled_departure > scheduled_arrival),
+CONSTRAINT ck_reservations_occupancy       CHECK (occupied_until > occupied_from),
+CONSTRAINT ck_reservations_arrival_buffer  CHECK (occupied_from <= scheduled_arrival),
+CONSTRAINT ck_reservations_departure_buffer CHECK (occupied_until >= scheduled_departure),
+CONSTRAINT ck_reservations_buffer_bounds   CHECK (
+    occupied_until <= scheduled_departure + INTERVAL '24 hours'
+    AND occupied_from  >= scheduled_arrival  - INTERVAL '24 hours')
+```
+
+The last one is the point: it stops a buggy *or compromised* writer from parking a
+reservation outside the schedule it claims to serve.
+
+## Buffers are applied before storage
+
+Each track carries its own `setup_buffer_minutes` and `clearance_buffer_minutes`, both
+constrained to be non-negative. Those are folded into the effective occupancy window
+*before* it is written, so the constraint compares the space a train actually needs
+rather than the window someone typed on a timetable.
+
+## The schema
+
+Seven tables: `yards`, `tracks`, `track_capabilities`, `trains`, `train_required_capabilities`,
+`track_reservations` and `audit_events` — plus six indexes.
+
+`track_capabilities` and `train_required_capabilities` are tables rather than a CSV column
+on purpose: "this train needs electrified track" has to be a relation, so that a
+reservation cannot claim a yard different from its track's yard. The composite foreign key
+`(track_id, yard_id) → tracks(id, yard_id)` enforces it structurally.
+
+## Testing against the real thing
+
+The exclusion constraint's behaviour cannot be reproduced on H2 or any in-memory
+substitute — the whole point of the design is a behaviour the tests would not reproduce
+faithfully elsewhere. So the backend tests run against **real PostgreSQL 17 in
+Testcontainers**, including the case that matters: two windows on one track that merely
+touch are accepted, and a third that overlaps them is rejected by the database.
+
+## Everything else that has to be right
+
+A `CorrelationIdFilter` reads or generates `X-Correlation-Id` and pushes it into the SLF4J
+MDC, so a request, its logs and its audit event share one identifier. Every error — including
+a type mismatch — is mapped by a single `@RestControllerAdvice` into one envelope:
+code, message, correlation ID, timestamp, path, field errors. Entities are never serialised
+directly; every response is an explicit record.
+
+Delivery is three containers — PostgreSQL 17 with a `pg_isready` health check, the backend,
+and an Nginx frontend that proxies `/api`, `/actuator` and the OpenAPI and Swagger paths —
+behind a three-job CI: `./mvnw verify`, the Angular test-and-build with `npm audit`, and a
+compose validation.
+
+## Scope
+
+The master-data slice is what is implemented — yards, tracks and trains behind the API,
+with the reservation, recommendation and audit modules still to come. The demo dataset is
+one yard, five tracks and two trains. The project's own documentation is explicit that
+forward-looking behaviour must not be presented as shipped, and this write-up follows the
+same rule: the scheduling engine, the automatic conflict resolution and the
+recommendation ranking are specified, not built.
